@@ -1,9 +1,10 @@
 import './styles/global.css'
+import Hero from './components/Hero/Hero'
 
 function App() {
   return (
     <div className="app">
-      <h1>18TRIP</h1>
+      <Hero />
     </div>
   )
 }

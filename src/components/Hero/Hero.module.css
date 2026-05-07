@@ -1,0 +1,138 @@
+/* Hero 容器 */
+.hero {
+  position: relative;
+  width: 100%;
+  height: 100dvh;
+  overflow: hidden;
+  background: #000;
+}
+
+/* 全屏图层 — 用于全尺寸透明 PNG（1242x2208 等） */
+.layer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.layer img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center top;
+}
+
+/* === Keyframes === */
+
+@keyframes float3 {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-3px); }
+}
+
+@keyframes float4 {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-4px); }
+}
+
+@keyframes float5 {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-5px); }
+}
+
+@keyframes float6 {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
+}
+
+@keyframes float8 {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+
+@keyframes float10 {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+@keyframes sway1 {
+  0%, 100% { transform: rotate(0deg); }
+  50% { transform: rotate(1deg); }
+}
+
+@keyframes sway1_5 {
+  0%, 100% { transform: rotate(0deg); }
+  50% { transform: rotate(1.5deg); }
+}
+
+/* === Layer styles (z-index order) === */
+
+.bg { z-index: 1; }
+
+.tuya {
+  z-index: 2;
+  animation: float3 8s ease-in-out infinite;
+}
+
+.huangban {
+  z-index: 3;
+  animation: sway1 6s ease-in-out infinite;
+}
+
+.baiban {
+  z-index: 4;
+  animation: sway1_5 7s ease-in-out infinite;
+}
+
+.zuobiao {
+  z-index: 5;
+  animation: float5 4s ease-in-out infinite;
+}
+
+.riqi {
+  z-index: 6;
+  animation: float4 5s ease-in-out infinite;
+  animation-delay: 0.5s;
+}
+
+.biaoti {
+  z-index: 7;
+  animation: float6 3.5s ease-in-out infinite;
+}
+
+.changsha {
+  z-index: 8;
+  animation: float8 3s ease-in-out infinite;
+  animation-delay: 1s;
+}
+
+.caidai1 {
+  z-index: 9;
+  animation: float10 4s ease-in-out infinite;
+  animation-delay: 1s;
+}
+
+.caidai2 {
+  z-index: 10;
+  animation: float8 5s ease-in-out infinite;
+  animation-delay: 2s;
+}
+
+.shaomai {
+  z-index: 11;
+  animation: float10 2.5s ease-in-out infinite;
+  animation-delay: 0.8s;
+}
+
+.hua {
+  z-index: 12;
+  animation: float8 4s ease-in-out infinite;
+  animation-delay: 0.3s;
+}
+
+.feng {
+  z-index: 13;
+  animation: float8 4.5s ease-in-out infinite;
+  animation-delay: 1.5s;
+}
