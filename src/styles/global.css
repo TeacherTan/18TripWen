@@ -1,0 +1,27 @@
+@import url('https://fonts.googleapis.com/css2?family=Intel+One+Mono:wght@400;700&display=swap');
+
+*,
+*::before,
+*::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  font-family: 'Intel One Mono', monospace;
+  -webkit-font-smoothing: antialiased;
+}
+
+body {
+  background: #000;
+  min-height: 100dvh;
+  overflow-x: hidden;
+}
+
+.app {
+  width: 100%;
+  max-width: 430px;
+  margin: 0 auto;
+  position: relative;
+}
