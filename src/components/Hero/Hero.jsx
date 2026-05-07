@@ -33,14 +33,16 @@ const layers = [
 export default function Hero() {
   return (
     <section className={styles.hero}>
-      {layers.map((layer) => (
-        <div
-          key={layer.className}
-          className={`${styles.layer} ${styles[layer.className]}`}
-        >
-          <img src={layer.src} alt={layer.alt} draggable={false} />
-        </div>
-      ))}
+      <div className={styles.imageContainer}>
+        {layers.map((layer) => (
+          <div
+            key={layer.className}
+            className={`${styles.layer} ${styles[layer.className]}`}
+          >
+            <img src={layer.src} alt={layer.alt} draggable={false} />
+          </div>
+        ))}
+      </div>
     </section>
   )
 }

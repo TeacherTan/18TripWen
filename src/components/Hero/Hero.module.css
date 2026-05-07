@@ -5,23 +5,29 @@
   height: 100dvh;
   overflow: hidden;
   background: #000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-/* 全屏图层 — 用于全尺寸透明 PNG（1242x2208 等） */
+.imageContainer {
+  position: relative;
+  width: min(100vw, 100dvh * (1242 / 2208));
+  height: min(100dvh, 100vw * (2208 / 1242));
+  flex-shrink: 0;
+}
+
+/* 图层 */
 .layer {
   position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
   pointer-events: none;
 }
 
 .layer img {
   width: 100%;
   height: 100%;
-  object-fit: cover;
-  object-position: center top;
+  object-fit: contain;
+  object-position: center;
 }
 
 /* === Keyframes === */
@@ -68,71 +74,86 @@
 
 /* === Layer styles (z-index order) === */
 
-.bg { z-index: 1; }
+.bg { 
+  z-index: 1; 
+  width: 100%; height: 100%; top: 0; left: 0; 
+}
 
 .tuya {
   z-index: 2;
   animation: float3 8s ease-in-out infinite;
+  width: 48.55%; height: 61.50%; top: 32.70%; left: 37.44%;
 }
 
 .huangban {
   z-index: 3;
   animation: sway1 6s ease-in-out infinite;
+  width: 100.00%; height: 59.87%; top: 16.49%; left: 0.00%;
 }
 
 .baiban {
   z-index: 4;
   animation: sway1_5 7s ease-in-out infinite;
+  width: 97.67%; height: 59.38%; top: 18.43%; left: 2.33%;
 }
 
 .zuobiao {
   z-index: 5;
   animation: float5 4s ease-in-out infinite;
+  width: 100%; height: 100%; top: 0; left: 0;
 }
 
 .riqi {
   z-index: 6;
   animation: float4 5s ease-in-out infinite;
   animation-delay: 0.5s;
+  width: 37.28%; height: 5.80%; top: 34.83%; left: 19.16%;
 }
 
 .biaoti {
   z-index: 7;
   animation: float6 3.5s ease-in-out infinite;
+  width: 73.35%; height: 29.94%; top: 35.87%; left: 19.24%;
 }
 
 .changsha {
   z-index: 8;
   animation: float8 3s ease-in-out infinite;
   animation-delay: 1s;
+  width: 28.82%; height: 12.27%; top: 20.02%; left: 63.77%;
 }
 
 .caidai1 {
   z-index: 9;
   animation: float10 4s ease-in-out infinite;
   animation-delay: 1s;
+  width: 82.69%; height: 42.48%; top: 28.03%; left: 12.80%;
 }
 
 .caidai2 {
   z-index: 10;
   animation: float8 5s ease-in-out infinite;
   animation-delay: 2s;
+  width: 85.83%; height: 48.28%; top: 21.47%; left: 7.81%;
 }
 
 .shaomai {
   z-index: 11;
   animation: float10 2.5s ease-in-out infinite;
   animation-delay: 0.8s;
+  width: 20.37%; height: 10.60%; top: 52.31%; left: 74.24%;
 }
 
 .hua {
   z-index: 12;
   animation: float8 4s ease-in-out infinite;
   animation-delay: 0.3s;
+  width: 42.75%; height: 24.50%; top: 68.98%; left: 40.02%;
 }
 
 .feng {
   z-index: 13;
   animation: float8 4.5s ease-in-out infinite;
   animation-delay: 1.5s;
+  width: 46.14%; height: 27.31%; top: 6.84%; left: 12.48%;
 }
