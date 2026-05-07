@@ -1,0 +1,47 @@
+.menu {
+  background: #fff;
+  padding: 40px 20px;
+}
+
+.menuItem {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 24px 12px;
+}
+
+.reverse {
+  flex-direction: row-reverse;
+}
+
+.reverse .textGroup {
+  text-align: right;
+}
+
+.icon {
+  width: 80px;
+  height: 80px;
+  flex-shrink: 0;
+  object-fit: contain;
+}
+
+.textGroup {
+  flex: 1;
+}
+
+.label {
+  font-family: 'Intel One Mono', monospace;
+  font-size: 36px;
+  font-weight: 400;
+  color: #000;
+  line-height: 1.2;
+}
+
+.sublabel {
+  font-family: 'Intel One Mono', monospace;
+  font-size: 14px;
+  font-weight: 400;
+  color: #888;
+  letter-spacing: 0.1em;
+  margin-top: 4px;
+}
