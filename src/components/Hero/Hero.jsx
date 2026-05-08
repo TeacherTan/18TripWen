@@ -8,7 +8,6 @@ import zuobiao from '../../assets/main-page/坐标.png'
 import riqi from '../../assets/main-page/日期.png'
 import biaoti from '../../assets/main-page/标题.png'
 import changsha from '../../assets/main-page/长沙对话框.png'
-import caidai1 from '../../assets/main-page/彩带1.png'
 import caidai2 from '../../assets/main-page/彩带2.png'
 import shaomai from '../../assets/main-page/烧卖.png'
 import hua from '../../assets/main-page/椛.png'
@@ -23,7 +22,6 @@ const layers = [
   { src: riqi, className: 'riqi', alt: '日期' },
   { src: biaoti, className: 'biaoti', alt: '标题' },
   { src: changsha, className: 'changsha', alt: '长沙对话框' },
-  { src: caidai1, className: 'caidai1', alt: '彩带1' },
   { src: caidai2, className: 'caidai2', alt: '彩带2' },
   { src: shaomai, className: 'shaomai', alt: '烧卖' },
   { src: hua, className: 'hua', alt: '椛' },

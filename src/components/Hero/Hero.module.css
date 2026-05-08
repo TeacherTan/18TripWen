@@ -123,13 +123,6 @@
   width: 28.82%; height: 12.27%; top: 20.02%; left: 63.77%;
 }
 
-.caidai1 {
-  z-index: 9;
-  animation: float10 4s ease-in-out infinite;
-  animation-delay: 1s;
-  width: 82.69%; height: 42.48%; top: 28.03%; left: 12.80%;
-}
-
 .caidai2 {
   z-index: 10;
   animation: float8 5s ease-in-out infinite;
