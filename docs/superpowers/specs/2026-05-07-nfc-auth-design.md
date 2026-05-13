@@ -1,8 +1,19 @@
-# NFC 身份认证与用户系统设计
+# NFC 身份认证与用户系统 — 功能开发总文档
 
-**日期：** 2026-05-07  
-**项目：** 18TRIP OnLy 长沙 活动站  
-**范围：** NFC 碰触登录、用户系统、PWA 深链接、个性化欢迎页
+**日期：** 2026-05-07
+**项目：** 18TRIP OnLy 长沙 活动站
+**范围：** NFC 碰触登录、用户系统、PWA 深链接、个性化欢迎页、打卡与成就系统
+
+---
+
+## 功能文档索引
+
+| 功能 | 文档 | 优先级 |
+|------|------|--------|
+| 用户认证系统 | [features/auth-system.md](features/auth-system.md) | P0 |
+| 打卡与成就系统 | [features/checkin-achievement.md](features/checkin-achievement.md) | P0 |
+| 后台管理系统 | [features/admin-management.md](features/admin-management.md) | P1 |
+| 部署与运维 | [features/deployment.md](features/deployment.md) | P1 |
 
 ---
 
@@ -11,221 +22,212 @@
 将现有 React + Vite PWA 活动站扩展为支持 NFC 身份认证的完整系统。用户通过碰触 NFC 贴纸访问网站，系统识别身份后展示个性化欢迎页，并在整个 PWA 会话中保持登录状态。
 
 **约束：**
+
 - 用户上限 500 人，支持动态新增
-- 必须兼容 iOS 和 Android
-- 登录状态保持 7 天滑动续期
+- 兼容 iOS 和 Android（浏览器体验优先，iOS PWA 深链接后续真机验证）
+- 登录状态保持 30 天，确保活动当天不失效
 - 安全性要求为活动级别（非金融/医疗数据）
+- 活动为单日，打卡为每人每点一次
 
 ---
 
 ## 技术选型
 
 | 层级 | 选型 |
-|------|------|
+| ---- | ---- |
 | 前端 | React + Vite（现有）+ React Router |
 | PWA | vite-plugin-pwa（现有） |
 | 后端 | Node.js + Express.js |
 | 数据库 | PostgreSQL |
-| 认证 | JWT 存 localStorage，7 天有效期 |
-| 存储 | 可替换 Storage Adapter（S3 / 阿里云 OSS / 腾讯云 COS） |
+| 认证 | JWT 存 localStorage，30 天有效期 |
+| 存储 | 阿里云 OSS（单 provider） |
 
 ---
 
 ## 整体架构
 
 ```
-NFC 芯片（URL: https://yoursite.com/?nfc=TOKEN）
+NFC 身份卡（URL: https://yoursite.com/?nfc=USER_TOKEN）
+NFC 打卡点（URL: https://yoursite.com/?spot=SPOT_TOKEN）
   │
   ▼
-手机系统
-  ├─ 已安装 PWA → 在 PWA 内打开（自动，scope="/" 覆盖）
-  └─ 未安装     → 浏览器打开，显示"添加到主屏幕"提示
+手机浏览器（iOS/Android）
   │
   ▼
-前端 React App
-  ├─ 检测 ?nfc=TOKEN → POST /api/auth/nfc → 存 JWT → 跳 /welcome
-  └─ 检测 localStorage JWT → 恢复登录状态 / 检查续期
-  │
-  ▼
-Express.js 后端
-  ├─ 验证 TOKEN → 查 PostgreSQL → 颁发 JWT
-  └─ 管理接口（新增用户、重置 token 等）
-  │
-  ▼
-PostgreSQL + Storage（OSS/S3）
+Nginx 反向代理
+  ├─ /        → Vite 静态资源
+  └─ /api/*   → Express.js 后端
+                  │
+                  ▼
+               PostgreSQL + 阿里云 OSS
 ```
 
 ---
 
-## NFC Token 设计
+## 认证流程总览
 
-- 每个用户拥有一个**永久唯一 UUID v4 token**，写入 NFC 芯片
-- Token 可重复使用（每次碰触均可登录）
-- 管理员可通过 `POST /api/admin/users/:id/regen-token` 重新生成 token，旧 token 立即失效
-- NFC 芯片写入内容：`https://yoursite.com/?nfc=<UUID>`
+```
+NFC 碰触 → ?nfc=TOKEN → POST /api/auth/nfc
+  ├─ 已注册 → 存 JWT → /welcome
+  └─ 未注册 → 存 JWT → /register → 绑定用户名密码 → /welcome
 
----
+密码登录 → /login → POST /api/auth/login → 存 JWT → /welcome
 
-## PWA 深链接行为
-
-无需额外开发。PWA manifest 的 `scope` 为 `/`，`/?nfc=TOKEN` 在 scope 内：
-- **已安装 PWA**：系统自动在 PWA 内打开该 URL
-- **未安装**：在浏览器中打开，正常流程，可提示安装
-- **iOS / Android** 均适用此机制
+会话恢复 → localStorage JWT → 恢复状态 / 自动续期
+```
 
 ---
 
-## 数据库结构
-
-### users 表
+## 数据库完整结构
 
 ```sql
 CREATE TABLE users (
+  id             UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  username       VARCHAR(50) UNIQUE,
+  password_hash  TEXT,
+  city           VARCHAR(50),
+  avatar_url     TEXT,
+  nfc_token      UUID UNIQUE NOT NULL DEFAULT gen_random_uuid(),
+  role           VARCHAR(20) NOT NULL DEFAULT 'user',
+  is_registered  BOOLEAN NOT NULL DEFAULT false,
+  deactivated_at TIMESTAMPTZ,
+  created_at     TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+
+CREATE TABLE check_in_spots (
   id          UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  name        VARCHAR(50)  NOT NULL,
-  city        VARCHAR(50)  NOT NULL,
-  age         SMALLINT,
-  contact     VARCHAR(100),
-  avatar_url  TEXT,                          -- 存储服务上的图片地址
-  nfc_token   UUID UNIQUE NOT NULL DEFAULT gen_random_uuid(),
-  role        VARCHAR(20)  NOT NULL DEFAULT 'user',  -- user | admin
-  created_at  TIMESTAMPTZ  NOT NULL DEFAULT now()
+  name        VARCHAR(50) NOT NULL,
+  spot_token  UUID UNIQUE NOT NULL DEFAULT gen_random_uuid(),
+  active      BOOLEAN NOT NULL DEFAULT true,
+  created_at  TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+
+CREATE TABLE check_ins (
+  id         UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  user_id    UUID NOT NULL REFERENCES users(id),
+  spot_id    UUID NOT NULL REFERENCES check_in_spots(id),
+  checked_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  UNIQUE(user_id, spot_id)
+);
+
+CREATE TABLE achievements (
+  id          UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  user_id     UUID NOT NULL REFERENCES users(id),
+  achievement VARCHAR(50) NOT NULL,
+  unlocked_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  UNIQUE(user_id, achievement)
 );
 ```
 
 ---
 
-## API 接口
-
-### 认证
-
-| 方法 | 路径 | 说明 |
-|------|------|------|
-| POST | `/api/auth/nfc` | `{ token }` → `{ jwt, user }`，NFC 登录 |
-| POST | `/api/auth/refresh` | `Bearer JWT` → `{ jwt }`，续期 |
-| GET  | `/api/auth/me` | `Bearer JWT` → `user`，获取当前用户 |
-
-### 用户管理（admin only）
-
-管理员通过同样的 NFC 碰触流程登录，其 `role` 字段值为 `admin`。后端 `authenticate` 中间件验证 JWT 后，`requireAdmin` 中间件检查 `role === 'admin'`，否则返回 403。管理员账户在数据库中手动创建。
-
-
-
-| 方法 | 路径 | 说明 |
-|------|------|------|
-| GET    | `/api/admin/users` | 列出所有用户 |
-| POST   | `/api/admin/users` | 新增用户，自动生成 nfc_token |
-| PUT    | `/api/admin/users/:id` | 修改用户信息 |
-| POST   | `/api/admin/users/:id/regen-token` | 重新生成 nfc_token |
-| DELETE | `/api/admin/users/:id` | 删除用户 |
-
-### 存储
-
-| 方法 | 路径 | 说明 |
-|------|------|------|
-| GET | `/api/upload/presign` | 返回预签名上传 URL，前端直传，不经后端 |
-
-存储层通过环境变量 `STORAGE_PROVIDER=s3|aliyun|tencent` 切换，底层用 adapter 封装各云厂商差异，上层接口不变。
-
----
-
-## JWT 设计
-
-**Payload：**
-```json
-{
-  "userId": "uuid",
-  "name": "张三",
-  "role": "user",
-  "iat": 1234567890,
-  "exp": 1234567890
-}
-```
-
-**存储：** `localStorage.setItem('jwt', token)`
-
-**续期策略：**
-- App 每次启动检查 JWT 剩余有效期
-- 剩余 < 1 天时自动调用 `/api/auth/refresh` 换取新 7 天 JWT
-- `/api/auth/refresh` 只接受**未过期**的 JWT，过期后需重新碰 NFC
-- 实际效果：用户每 6 天内打开一次 App 即可永久保持登录
-- 用户无感知
-
----
-
-## 前端路由与页面结构
-
-```
-/              主页（现有 Hero + Menu）
-/?nfc=TOKEN    NFC 入口，主页启动时副作用处理
-/welcome       个性化欢迎页（登录后自动跳转）
-/profile       用户个人资料页
-```
-
-### App 启动逻辑
-
-```
-App 启动
-  ├─ URL 含 ?nfc=TOKEN？
-  │   ├─ 是 → POST /api/auth/nfc
-  │   │        → 存 JWT
-  │   │        → 清除 URL 中的 nfc 参数
-  │   │        → navigate('/welcome', { replace: true })
-  │   └─ 否 → 读 localStorage JWT
-  │             ├─ 有效 → 恢复登录状态，检查是否需要续期
-  │             └─ 无效/不存在 → 匿名访问
-```
-
-### 登录状态 UI
-
-- **已登录**：Menu 栏最右侧显示用户头像（圆形），点击进入 `/profile`
-- **未登录**：Menu 栏最右侧显示 NFC 图标，提示碰卡登录
-- 全局登录状态通过 React Context（`AuthContext`）管理
-
-### 欢迎页（/welcome）
-
-- 展示：用户姓名、所属城市、欢迎文案（可按城市定制）
-- 复用现有 Hero 视觉风格的氛围动画
-- "进入活动"按钮：`navigate('/', { replace: true })`（清除历史，防止返回键回到欢迎页）
-
----
-
-## 项目目录结构变化
+## 项目目录结构
 
 ```
 src/
   ├─ context/
-  │   └─ AuthContext.jsx        # 全局登录状态
+  │   └─ AuthContext.jsx
   ├─ hooks/
-  │   └─ useNfcLogin.js         # 检测 ?nfc= 参数并触发登录
+  │   ├─ useNfcLogin.js
+  │   └─ useSpotCheckIn.js
   ├─ pages/
-  │   ├─ Welcome.jsx            # 个性化欢迎页
-  │   └─ Profile.jsx            # 用户资料页
-  ├─ components/                # 现有组件
-  └─ App.jsx                    # 引入 Router + AuthContext
+  │   ├─ Welcome.jsx
+  │   ├─ Register.jsx
+  │   ├─ Login.jsx
+  │   ├─ Profile.jsx
+  │   └─ CheckIn.jsx
+  ├─ components/
+  └─ App.jsx
 
-server/                         # 新建后端目录
+server/
   ├─ index.js
   ├─ routes/
   │   ├─ auth.js
+  │   ├─ checkin.js
   │   ├─ admin.js
   │   └─ upload.js
   ├─ middleware/
-  │   └─ authenticate.js        # JWT 验证中间件
+  │   ├─ authenticate.js
+  │   └─ requireAdmin.js
+  ├─ services/
+  │   └─ achievement.js
   ├─ storage/
-  │   ├─ index.js               # adapter 入口
-  │   ├─ s3.js
-  │   ├─ aliyun.js
-  │   └─ tencent.js
+  │   ├─ index.js
+  │   └─ aliyun.js
+  ├─ scripts/
+  │   └─ seed-admin.js
   └─ db/
       └─ schema.sql
 ```
 
 ---
 
-## 开放问题（实施前需确认）
+## 开发阶段与步骤
+
+### Phase 1：基础认证（P0）
+
+**目标：** 用户能通过 NFC 碰触完成登录/注册
+
+1. 搭建 Express.js 后端骨架 + PostgreSQL 连接
+2. 实现 `schema.sql` 建表
+3. 实现 `POST /api/auth/nfc` — NFC token 查找用户，签发 JWT
+4. 实现 `POST /api/auth/register` — 绑定用户名密码
+5. 实现 `POST /api/auth/login` — 用户名密码登录
+6. 实现 `POST /api/auth/refresh` — JWT 续期
+7. 实现 `GET /api/auth/me` — 获取当前用户
+8. 前端：`AuthContext` + `useNfcLogin` hook
+9. 前端：Register.jsx + Login.jsx 页面
+10. 前端：Welcome.jsx 个性化欢迎页
+11. 联调测试
+
+### Phase 2：打卡与成就（P0）
+
+**目标：** 用户能在各打卡点签到并解锁成就
+
+1. 实现 `POST /api/check-in` — 打卡逻辑（含幂等检查）
+2. 实现 `GET /api/check-in/status` — 打卡状态
+3. 实现 `GET /api/check-in/spots` — 打卡点列表
+4. 实现 achievement service — 成就检查与解锁
+5. 前端：`useSpotCheckIn` hook
+6. 前端：CheckIn.jsx 打卡结果页
+7. 前端：Profile.jsx 个人资料页（打卡进度 + 成就）
+8. 联调测试
+
+### Phase 3：后台管理（P1）
+
+**目标：** 管理员能管理用户、打卡点，支持补卡挂失
+
+1. 实现 `requireAdmin` 中间件
+2. 实现用户管理 API（CRUD + 软删除）
+3. 实现打卡点管理 API（CRUD + 软删除）
+4. 实现用户信息转移 API
+5. 实现补卡 API
+6. 实现挂失 API（regen-token + 可选用户自助挂失）
+7. 实现 seed-admin.js 脚本
+8. 前端：管理后台页面
+9. 联调测试
+
+### Phase 4：部署与收尾（P1）
+
+**目标：** 部署上线 + iOS 真机验证
+
+1. 配置 Nginx + HTTPS (Let's Encrypt)
+2. 阿里云 OSS 配置 + presign upload
+3. PM2 进程管理
+4. 执行 seed-admin 初始化管理员
+5. NFC 卡片写入测试
+6. iOS 真机 PWA 深链接验证
+7. 全流程端到端测试
+
+---
+
+## 开放问题
 
 1. NFC 芯片型号和写卡工具（推荐 NTAG213，用 NFC Tools App 写入）
-2. 云服务器和域名是否已有，HTTPS 证书是否配置（PWA 必须 HTTPS）
-3. 存储服务商最终选型（S3 / 阿里云 / 腾讯云）
-4. 欢迎页按城市定制文案的具体内容
+2. 身份卡和打卡点分别使用什么形态的 NFC 载体（卡片 / 贴纸 / 挂牌）
+3. 域名是否已有
+4. 阿里云 OSS bucket 是否已创建
+5. 欢迎页按城市定制文案的具体内容
+6. 打卡点数量和位置规划（决定成就规则的设计）
+7. 成就规则的具体定义（如：限时打卡等）
+8. iOS 真机 PWA 深链接行为验证
