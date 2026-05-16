@@ -89,3 +89,79 @@ Content-Type: application/json
 {
   "spotToken": "00000000-0000-0000-0000-000000000000"
 }
+
+### ----- Phase 3: 后台管理 -----
+
+### 13. 用户列表（含搜索）
+GET {{baseUrl}}/admin/users?search=
+Authorization: Bearer {{jwt}}
+
+### 14. 新增空白用户（返回 nfc_token 给 NFC 卡写入）
+POST {{baseUrl}}/admin/users
+Authorization: Bearer {{jwt}}
+Content-Type: application/json
+
+{
+  "city": "长沙"
+}
+
+### 15. 重新生成 nfc_token（旧卡失效）
+POST {{baseUrl}}/admin/users/REPLACE_USER_ID/regen-token
+Authorization: Bearer {{jwt}}
+
+### 16. 挂失（语义同 regen-token）
+POST {{baseUrl}}/admin/users/REPLACE_USER_ID/report-loss
+Authorization: Bearer {{jwt}}
+
+### 17. 停用用户
+PUT {{baseUrl}}/admin/users/REPLACE_USER_ID/deactivate
+Authorization: Bearer {{jwt}}
+
+### 18. 用户数据迁移
+POST {{baseUrl}}/admin/users/transfer
+Authorization: Bearer {{jwt}}
+Content-Type: application/json
+
+{
+  "sourceUserId": "REPLACE_SOURCE",
+  "targetUserId": "REPLACE_TARGET"
+}
+
+### 19. 打卡点列表（含已停用）
+GET {{baseUrl}}/admin/spots?include_inactive=1
+Authorization: Bearer {{jwt}}
+
+### 20. 新增打卡点
+POST {{baseUrl}}/admin/spots
+Authorization: Bearer {{jwt}}
+Content-Type: application/json
+
+{
+  "name": "新增点位",
+  "asset_key": "spot_07",
+  "display_order": 7
+}
+
+### 21. 修改打卡点
+PUT {{baseUrl}}/admin/spots/REPLACE_SPOT_ID
+Authorization: Bearer {{jwt}}
+Content-Type: application/json
+
+{
+  "name": "改名",
+  "active": false
+}
+
+### 22. 补卡
+POST {{baseUrl}}/admin/check-ins/supplement
+Authorization: Bearer {{jwt}}
+Content-Type: application/json
+
+{
+  "userId": "REPLACE_USER_ID",
+  "spotId": "REPLACE_SPOT_ID"
+}
+
+### 23. 查看打卡记录
+GET {{baseUrl}}/admin/check-ins
+Authorization: Bearer {{jwt}}

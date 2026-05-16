@@ -2,6 +2,7 @@ import express from 'express';
 import 'dotenv/config';
 import authRoutes from './routes/auth.js';
 import checkinRoutes from './routes/checkin.js';
+import adminRoutes from './routes/admin.js';
 import { pool } from './db/index.js';
 
 const app = express();
@@ -20,6 +21,7 @@ app.get('/api/health', async (_req, res) => {
 
 app.use('/api/auth', authRoutes);
 app.use('/api/check-in', checkinRoutes);
+app.use('/api/admin', adminRoutes);
 
 app.use((err, _req, res, _next) => {
   console.error('[error]', err);

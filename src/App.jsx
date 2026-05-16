@@ -1,7 +1,8 @@
-import { Routes, Route } from 'react-router-dom'
+import { Routes, Route, Navigate } from 'react-router-dom'
 import './styles/global.css'
 import './styles/auth.css'
 import './styles/achievement.css'
+import './styles/admin.css'
 import Hero from './components/Hero/Hero'
 import Menu from './components/Menu/Menu'
 import Welcome from './pages/Welcome'
@@ -9,6 +10,10 @@ import Register from './pages/Register'
 import Login from './pages/Login'
 import CheckIn from './pages/CheckIn'
 import Profile from './pages/Profile'
+import AdminLayout from './pages/admin/AdminLayout'
+import AdminUsers from './pages/admin/AdminUsers'
+import AdminSpots from './pages/admin/AdminSpots'
+import AdminCheckIns from './pages/admin/AdminCheckIns'
 import { useNfcLogin } from './hooks/useNfcLogin'
 import { useSpotCheckIn } from './hooks/useSpotCheckIn'
 
@@ -34,6 +39,12 @@ function App() {
       <Route path="/login" element={<Login />} />
       <Route path="/checkin" element={<CheckIn />} />
       <Route path="/profile" element={<Profile />} />
+      <Route path="/admin" element={<AdminLayout />}>
+        <Route index element={<Navigate to="users" replace />} />
+        <Route path="users" element={<AdminUsers />} />
+        <Route path="spots" element={<AdminSpots />} />
+        <Route path="check-ins" element={<AdminCheckIns />} />
+      </Route>
     </Routes>
   )
 }
