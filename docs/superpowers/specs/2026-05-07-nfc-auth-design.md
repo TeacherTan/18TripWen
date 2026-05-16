@@ -40,15 +40,15 @@
 | 后端 | Node.js + Express.js |
 | 数据库 | PostgreSQL |
 | 认证 | JWT 存 localStorage，30 天有效期 |
-| 存储 | 阿里云 OSS（单 provider） |
+| 存储 | 本地磁盘（当前）；adapter 架构预留阿里云 OSS 切换能力 |
 
 ---
 
 ## 整体架构
 
 ```
-NFC 身份卡（URL: https://yoursite.com/?nfc=USER_TOKEN）
-NFC 打卡点（URL: https://yoursite.com/?spot=SPOT_TOKEN）
+NFC 身份卡（URL: https://tyzhome.xyz/?nfc=USER_TOKEN）
+NFC 打卡点（URL: https://tyzhome.xyz/?spot=SPOT_TOKEN）
   │
   ▼
 手机浏览器（iOS/Android）
@@ -95,11 +95,13 @@ CREATE TABLE users (
 );
 
 CREATE TABLE check_in_spots (
-  id          UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  name        VARCHAR(50) NOT NULL,
-  spot_token  UUID UNIQUE NOT NULL DEFAULT gen_random_uuid(),
-  active      BOOLEAN NOT NULL DEFAULT true,
-  created_at  TIMESTAMPTZ NOT NULL DEFAULT now()
+  id            UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  name          VARCHAR(50) NOT NULL,
+  spot_token    UUID UNIQUE NOT NULL DEFAULT gen_random_uuid(),
+  asset_key     VARCHAR(50) NOT NULL,   -- 前端图纸资源标识，如 spot_01
+  display_order SMALLINT NOT NULL,      -- 成就墙固定槽位序号（1-6）
+  active        BOOLEAN NOT NULL DEFAULT true,
+  created_at    TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 
 CREATE TABLE check_ins (
@@ -110,13 +112,7 @@ CREATE TABLE check_ins (
   UNIQUE(user_id, spot_id)
 );
 
-CREATE TABLE achievements (
-  id          UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  user_id     UUID NOT NULL REFERENCES users(id),
-  achievement VARCHAR(50) NOT NULL,
-  unlocked_at TIMESTAMPTZ NOT NULL DEFAULT now(),
-  UNIQUE(user_id, achievement)
-);
+-- achievements 表不再需要：成就墙状态直接由 check_ins × check_in_spots 连表推导
 ```
 
 ---
@@ -225,9 +221,8 @@ server/
 
 1. NFC 芯片型号和写卡工具（推荐 NTAG213，用 NFC Tools App 写入）
 2. 身份卡和打卡点分别使用什么形态的 NFC 载体（卡片 / 贴纸 / 挂牌）
-3. 域名是否已有
-4. 阿里云 OSS bucket 是否已创建
-5. 欢迎页按城市定制文案的具体内容
-6. 打卡点数量和位置规划（决定成就规则的设计）
-7. 成就规则的具体定义（如：限时打卡等）
-8. iOS 真机 PWA 深链接行为验证
+3. ~~域名是否已有~~ ✅ 已确定：`tyzhome.xyz`
+4. ~~阿里云 OSS~~ ✅ 改为本地存储，adapter 架构预留切换能力
+5. ~~欢迎页城市文案~~ ✅ 已确定：注册时填 city，欢迎页显示「你好，{city}」；无 city 显示通用文案
+6. ~~打卡点数量~~ ✅ 开发阶段 mock 4 个点位（签到台、主舞台、市集区、拍照打卡墙），上线前由管理员在后台维护真实点位
+7. ~~成就规则~~ ✅ 已确定：6 个 NFC 打卡点对应成就墙 6 个固定槽位，碰卡即解锁对应图纸；无独立成就表，状态由 check_ins 推导

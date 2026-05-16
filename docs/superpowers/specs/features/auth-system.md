@@ -17,7 +17,7 @@
 
 ```
 用户碰触 NFC 身份卡
-  → 浏览器打开 https://yoursite.com/?nfc=<TOKEN>
+  → 浏览器打开 https://tyzhome.xyz/?nfc=<TOKEN>
   → 前端检测 ?nfc=TOKEN
   → POST /api/auth/nfc { token }
   → 后端查 users 表 nfc_token 字段
@@ -168,6 +168,19 @@ URL 含 ?nfc=TOKEN？
 
 ---
 
+## 欢迎页（Welcome.jsx）
+
+个性化欢迎页根据用户注册时填写的 `city` 字段动态展示文案：
+
+```
+有 city 字段 → 显示 "你好，{city}"（如 "你好，长沙"）
+无 city 字段 → 显示通用文案（如 "欢迎来到 18TRIP"）
+```
+
+city 值直接来自 JWT payload 中的用户信息，无需额外接口请求。
+
+---
+
 ## 登录状态 UI
 
 - **已登录**：Menu 栏最右侧显示用户头像，点击进入 `/profile`
@@ -178,5 +191,4 @@ URL 含 ?nfc=TOKEN？
 
 ## 开放问题
 
-- iOS PWA 深链接需真机验证，浏览器体验优先开发
 - 注册页是否需要手机号/邮箱（当前方案不要求）

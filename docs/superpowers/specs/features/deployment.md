@@ -55,13 +55,17 @@ DATABASE_URL=postgresql://user:pass@localhost:5432/18trip
 JWT_SECRET=<random-64-chars>
 JWT_EXPIRES_IN=30d
 
-# 存储（单 provider，先实现阿里云 OSS）
-STORAGE_PROVIDER=aliyun
-OSS_ACCESS_KEY_ID=<key>
-OSS_ACCESS_KEY_SECRET=<secret>
-OSS_BUCKET=<bucket>
-OSS_REGION=oss-cn-hangzhou
-OSS_ENDPOINT=https://oss-cn-hangzhou.aliyuncs.com
+# 存储（local = 本地磁盘，aliyun = 阿里云 OSS）
+STORAGE_PROVIDER=local
+UPLOAD_DIR=./uploads              # 本地存储目录，仅 local 模式使用
+
+# 切换到 OSS 时填充以下字段（当前无需配置）
+# STORAGE_PROVIDER=aliyun
+# OSS_ACCESS_KEY_ID=<key>
+# OSS_ACCESS_KEY_SECRET=<secret>
+# OSS_BUCKET=<bucket>
+# OSS_REGION=oss-cn-hangzhou
+# OSS_ENDPOINT=https://oss-cn-hangzhou.aliyuncs.com
 
 # 上传限制
 UPLOAD_MAX_SIZE=2097152          # 2MB
@@ -72,20 +76,44 @@ UPLOAD_ALLOWED_TYPES=image/jpeg,image/png,image/webp
 
 ## 存储方案
 
-**只实现阿里云 OSS**，接口预留 adapter 扩展点但不提前实现其他 provider。
+**当前实现：本地文件存储**，通过 adapter 接口预留未来切换 OSS 的能力。
 
 ```
 server/storage/
-  ├─ index.js    # adapter 入口，根据 STORAGE_PROVIDER 导出
-  └─ aliyun.js   # 阿里云 OSS 实现
+  ├─ index.js    # adapter 入口，根据 STORAGE_PROVIDER 环境变量导出对应实现
+  ├─ local.js    # 本地磁盘存储（当前默认）
+  └─ aliyun.js   # 阿里云 OSS（占位，未实现，切换时填充）
 ```
 
-### PreSign Upload 约束
+### adapter 接口契约
 
-- `GET /api/upload/presign` 需 Bearer JWT
+两个 provider 均需实现相同接口：
+
+```js
+// 上传文件，返回可访问的 URL
+async function upload(fileBuffer, filename, mimetype) → { url }
+
+// 删除文件（可选，用于头像替换时清理旧文件）
+async function remove(url) → void
+```
+
+### 本地存储实现（当前）
+
+- 文件存放于 `server/uploads/avatars/`
+- 通过 Express 静态服务暴露：`GET /uploads/avatars/:filename`
+- 上传接口：`POST /api/upload/avatar`（multipart/form-data），直接在服务端写盘
+- 无需 presign，前端直接 POST 文件
+
+### 切换到阿里云 OSS
+
+设置 `STORAGE_PROVIDER=aliyun` 并填充 `server/storage/aliyun.js` 即可，上层代码无需改动。
+
+### 上传约束（两个 provider 均适用）
+
+- 需 Bearer JWT
 - 限制文件类型：`image/jpeg`、`image/png`、`image/webp`
 - 限制文件大小：最大 2MB
-- 前端上传前预校验，后端 presign 时设置 OSS 约束
+- 前端上传前预校验大小和类型
 
 ---
 
