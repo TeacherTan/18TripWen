@@ -1,0 +1,108 @@
+/* 成就墙样式（占位级，等设计稿对齐后再细化） */
+.profile-page {
+  align-items: stretch;
+  justify-content: flex-start;
+  padding-top: 48px;
+}
+
+.profile-header {
+  text-align: center;
+  margin-bottom: 32px;
+}
+
+.profile-header h1 {
+  margin: 0;
+  font-size: 1.75rem;
+}
+
+.profile-city {
+  color: #94a3b8;
+  margin-top: 8px;
+}
+
+.achievement-wall {
+  width: 100%;
+  max-width: 480px;
+  margin: 0 auto;
+}
+
+.achievement-wall__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 16px;
+}
+
+.achievement-wall__header h2 {
+  margin: 0;
+  font-size: 1.25rem;
+}
+
+.achievement-wall__progress {
+  color: #94a3b8;
+  font-size: 0.9rem;
+}
+
+.achievement-wall__grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+}
+
+.achievement-slot {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.achievement-slot__art {
+  width: 100%;
+  aspect-ratio: 1;
+  border-radius: 12px;
+  background: #000;
+  border: 2px solid #1e293b;
+  transition: transform 0.3s ease, background 0.4s ease;
+}
+
+.achievement-slot.unlocked .achievement-slot__art {
+  background: linear-gradient(135deg, #475569, #94a3b8);
+  border-color: #4caf50;
+}
+
+.achievement-slot.highlighted .achievement-slot__art {
+  animation: unlock-pulse 0.9s ease-out;
+}
+
+@keyframes unlock-pulse {
+  0%   { transform: scale(0.6); opacity: 0; }
+  50%  { transform: scale(1.1); opacity: 1; }
+  100% { transform: scale(1); }
+}
+
+.achievement-slot__name {
+  font-size: 0.85rem;
+  color: #cbd5e1;
+  text-align: center;
+}
+
+.achievement-slot.locked .achievement-slot__name {
+  color: #64748b;
+}
+
+/* 打卡结果页 */
+.checkin-result .achievement-slot-wrapper {
+  margin: 24px auto;
+  width: 180px;
+}
+
+.checkin-spot-name {
+  font-size: 1.25rem;
+  color: #f1f5f9 !important;
+  margin-bottom: 8px !important;
+}
+
+.checkin-progress {
+  margin-top: 24px;
+  color: #94a3b8;
+}

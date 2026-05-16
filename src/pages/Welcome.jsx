@@ -14,6 +14,7 @@ export default function Welcome() {
       <h1>{greeting}</h1>
       <p>{user.username}，欢迎参加 18TRIP OnLy 长沙活动。</p>
       <div className="auth-actions">
+        <Link to="/profile">成就墙</Link>
         <Link to="/">返回首页</Link>
         <button type="button" onClick={logout}>退出登录</button>
       </div>

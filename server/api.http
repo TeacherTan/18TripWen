@@ -53,3 +53,39 @@ Content-Type: application/json
 {
   "token": "00000000-0000-0000-0000-000000000000"
 }
+
+### ----- Phase 2: 打卡与成就墙 -----
+
+### 8. 公开 spots 列表
+GET {{baseUrl}}/check-in/spots
+
+### 9. 打卡（spot_01 签到台）
+POST {{baseUrl}}/check-in
+Authorization: Bearer {{jwt}}
+Content-Type: application/json
+
+{
+  "spotToken": "11111111-0000-0000-0000-000000000001"
+}
+
+### 10. 重复打卡同一点位（应 alreadyCheckedIn=true）
+POST {{baseUrl}}/check-in
+Authorization: Bearer {{jwt}}
+Content-Type: application/json
+
+{
+  "spotToken": "11111111-0000-0000-0000-000000000001"
+}
+
+### 11. 成就墙状态
+GET {{baseUrl}}/check-in/status
+Authorization: Bearer {{jwt}}
+
+### 12. 无效 spotToken
+POST {{baseUrl}}/check-in
+Authorization: Bearer {{jwt}}
+Content-Type: application/json
+
+{
+  "spotToken": "00000000-0000-0000-0000-000000000000"
+}

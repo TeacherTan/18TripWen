@@ -1,16 +1,18 @@
 import { useState } from 'react'
-import { Link, Navigate, useNavigate } from 'react-router-dom'
+import { Link, Navigate, useNavigate, useSearchParams } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 
 export default function Login() {
   const { user, loading, loginWithPassword } = useAuth()
   const navigate = useNavigate()
+  const [searchParams] = useSearchParams()
+  const nextPath = searchParams.get('next') || '/welcome'
   const [form, setForm] = useState({ username: '', password: '' })
   const [error, setError] = useState(null)
   const [submitting, setSubmitting] = useState(false)
 
   if (loading) return <div className="auth-page">加载中…</div>
-  if (user) return <Navigate to="/welcome" replace />
+  if (user) return <Navigate to={nextPath} replace />
 
   const onChange = (e) => setForm({ ...form, [e.target.name]: e.target.value })
 
@@ -20,7 +22,7 @@ export default function Login() {
     setSubmitting(true)
     try {
       await loginWithPassword(form.username.trim(), form.password)
-      navigate('/welcome', { replace: true })
+      navigate(nextPath, { replace: true })
     } catch (err) {
       setError(err.message)
     } finally {
