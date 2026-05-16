@@ -1,0 +1,55 @@
+### REST Client 联调脚本（VS Code REST Client 扩展可直接发送）
+### 使用前确认：npm run db:up && npm run db:seed && node server/index.js
+
+@baseUrl = http://localhost:3000/api
+
+### 1. 健康检查
+GET {{baseUrl}}/health
+
+### 2. NFC 登录（admin 的 nfc_token 来自 seed-admin 输出）
+# @name nfcLogin
+POST {{baseUrl}}/auth/nfc
+Content-Type: application/json
+
+{
+  "token": "REPLACE_WITH_ADMIN_NFC_TOKEN"
+}
+
+### 3. 获取当前用户（用 nfcLogin 返回的 jwt）
+@jwt = {{nfcLogin.response.body.jwt}}
+GET {{baseUrl}}/auth/me
+Authorization: Bearer {{jwt}}
+
+### 4. 密码登录
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+  "username": "admin",
+  "password": "admin123"
+}
+
+### 5. JWT 续期
+POST {{baseUrl}}/auth/refresh
+Authorization: Bearer {{jwt}}
+
+### 6. 注册（需要先用一个未注册用户的 nfc 登录拿到 JWT）
+# 测试用：可以直接在数据库插入一个空白用户
+# INSERT INTO users DEFAULT VALUES RETURNING nfc_token;
+POST {{baseUrl}}/auth/register
+Authorization: Bearer {{jwt}}
+Content-Type: application/json
+
+{
+  "username": "test_user",
+  "password": "test1234",
+  "city": "长沙"
+}
+
+### 7. 无效 NFC token
+POST {{baseUrl}}/auth/nfc
+Content-Type: application/json
+
+{
+  "token": "00000000-0000-0000-0000-000000000000"
+}
