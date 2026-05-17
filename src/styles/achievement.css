@@ -106,3 +106,73 @@
   margin-top: 24px;
   color: #94a3b8;
 }
+
+/* 打卡结果弹窗 */
+.checkin-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 200;
+  padding: 24px;
+}
+
+.checkin-modal {
+  background: #0f172a;
+  border: 1px solid #1e293b;
+  border-radius: 20px;
+  padding: 32px 24px;
+  width: 100%;
+  max-width: 320px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  animation: modal-in 0.25s ease-out;
+}
+
+@keyframes modal-in {
+  from { transform: scale(0.88); opacity: 0; }
+  to   { transform: scale(1);    opacity: 1; }
+}
+
+.checkin-modal__title {
+  margin: 0;
+  font-size: 1.25rem;
+  color: #f1f5f9;
+}
+
+.checkin-modal__spot-name {
+  margin: 0;
+  font-size: 1rem;
+  color: #94a3b8;
+}
+
+.checkin-modal__slot {
+  width: 140px;
+  margin: 8px 0;
+}
+
+.checkin-modal__progress {
+  margin: 0;
+  font-size: 0.9rem;
+  color: #64748b;
+}
+
+.checkin-modal__close {
+  margin-top: 8px;
+  padding: 10px 28px;
+  border: none;
+  border-radius: 8px;
+  background: #4caf50;
+  color: #fff;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.checkin-modal__close:hover {
+  background: #43a047;
+}

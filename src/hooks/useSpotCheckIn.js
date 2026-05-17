@@ -5,7 +5,7 @@ import { apiFetch } from '../api/client'
 
 /**
  * 检测 URL 中 ?spot=TOKEN 参数：
- * - 已登录 → POST /api/check-in，结果通过 navigate state 传给 /checkin 页面
+ * - 已登录 → POST /api/check-in，结果通过 navigate state 传给 /profile 弹窗
  * - 未登录 → 跳转 /login 并保留 spot 参数，登录后由 /login 重新进入主路由再触发本 hook
  */
 export function useSpotCheckIn() {
@@ -32,7 +32,7 @@ export function useSpotCheckIn() {
         const next = new URLSearchParams(params)
         next.delete('spot')
         setParams(next, { replace: true })
-        navigate('/checkin', { replace: true, state: result })
+        navigate('/profile', { replace: true, state: { checkInResult: result } })
       })
       .catch((err) => {
         handledRef.current = false

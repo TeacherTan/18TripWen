@@ -1,14 +1,16 @@
 import { useEffect, useState } from 'react'
-import { Link, Navigate } from 'react-router-dom'
+import { Link, Navigate, useLocation } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import { apiFetch } from '../api/client'
 import AchievementSlot from '../components/AchievementSlot/AchievementSlot'
 
 export default function Profile() {
   const { user, loading: authLoading, logout } = useAuth()
+  const location = useLocation()
   const [status, setStatus] = useState(null)
   const [error, setError] = useState(null)
   const [loading, setLoading] = useState(true)
+  const [modal, setModal] = useState(location.state?.checkInResult ?? null)
 
   useEffect(() => {
     if (!user) return
@@ -59,6 +61,35 @@ export default function Profile() {
         <Link to="/">返回首页</Link>
         <button type="button" onClick={logout}>退出登录</button>
       </div>
+
+      {modal && (
+        <div className="checkin-modal-overlay" onClick={() => setModal(null)}>
+          <div className="checkin-modal" onClick={(e) => e.stopPropagation()}>
+            <h2 className="checkin-modal__title">
+              {modal.alreadyCheckedIn ? '你已在此打过卡' : '打卡成功'}
+            </h2>
+            <p className="checkin-modal__spot-name">{modal.spot.name}</p>
+            <div className="checkin-modal__slot">
+              <AchievementSlot
+                assetKey={modal.spot.asset_key}
+                name={modal.spot.name}
+                unlocked
+                highlighted={!modal.alreadyCheckedIn}
+              />
+            </div>
+            <p className="checkin-modal__progress">
+              已解锁 {modal.unlocked_count}/{modal.total} 张图纸
+            </p>
+            <button
+              type="button"
+              className="checkin-modal__close"
+              onClick={() => setModal(null)}
+            >
+              继续探索
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
