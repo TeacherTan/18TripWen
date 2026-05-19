@@ -165,3 +165,40 @@ Content-Type: application/json
 ### 23. 查看打卡记录
 GET {{baseUrl}}/admin/check-ins
 Authorization: Bearer {{jwt}}
+
+### ===== v0.2 新增字段联调 =====
+
+### A. status 应返回新字段
+GET {{baseUrl}}/check-in/status
+Authorization: Bearer {{jwt}}
+
+### B. admin 列出 14 条 spot
+@adminJwt = {{nfcLogin.response.body.jwt}}
+GET {{baseUrl}}/admin/spots?include_inactive=1
+Authorization: Bearer {{adminJwt}}
+
+### C. admin 编辑 npc 的 floor 与坐标
+# 把 :id 换成实际 npc id（从 B 的返回里复制）
+PUT {{baseUrl}}/admin/spots/REPLACE_NPC_ID
+Authorization: Bearer {{adminJwt}}
+Content-Type: application/json
+
+{
+  "floor": 2,
+  "pos_x": 42.5,
+  "pos_y": 67.8,
+  "activity_intro": "更新后的活动介绍"
+}
+
+### D. admin 创建新 venue
+POST {{baseUrl}}/admin/spots
+Authorization: Bearer {{adminJwt}}
+Content-Type: application/json
+
+{
+  "name": "测试场地",
+  "asset_key": "venue_test",
+  "display_order": 99,
+  "type": "venue",
+  "description": "这是一个测试场地"
+}
