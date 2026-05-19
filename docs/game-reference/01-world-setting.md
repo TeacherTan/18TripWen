@@ -3,6 +3,7 @@
 > **用途**：本项目（NFC 打卡活动站）的 IP 背景参考，供开发与文案使用
 > **信息时点**：2026-05
 > **主要来源**：[wiki.18t.rip](https://wiki.18t.rip/wiki/18TRIP_Wiki)（英文社区 wiki）
+> **官方交叉验证**：2026-05-19 已对照 [18trip.jp](https://18trip.jp/) 官网首页修订，详见 `00-verification-report.md`
 
 ---
 
@@ -11,28 +12,39 @@
 | 项目 | 内容 |
 |------|------|
 | 正式名称 | **18TRIP**（日文：エイティーントリップ / EIGHTEEN TRIP） |
+| 通用简称 | **エイトリ（Eitori）** — 官方在 og:title、tag 中统一使用 |
 | 开发/发行 | Liber Entertainment（リベル・エンタテインメント） |
 | 上线日期 | 2024 年 5 月 23 日 |
 | 平台 | Android（仅日服）、iOS |
-| 类型 | 冒险 + 抽卡（Adventure Gacha） |
-| 一句话简介 | 在未来的横滨 HAMA 18 特别观光区，20 位"区长"通过偶像活动振兴衰落的旅游产业 |
+| 类型 | **近未来おもてなしアドベンチャー**（Near-future Hospitality Adventure，官方品类定位）|
+| 一句话简介 | 在近未来的横滨 HAMA 18 区，以"旅"为主题、20 位"观光区长"展开的"おもてなし（款待）冒险" |
+| 官方 Hashtag | `#HAMA NICE TRIP` / `#EIGHTEEN TRIP` |
+| 故事起始时刻 | **2024-04-16 (SAT) 13:00 / 17.4°C ☀**（官网首页固定的"现在时"，与游戏上线日 5/23 不同）|
 
 ---
 
 ## 2. 世界观核心设定
 
 ### 时空背景
-故事发生在**近未来的横滨**，一个被设定为「**HAMA 18**」的独立特别观光区（Independent Special Tourism Zone）。该区曾经是日本最具代表性的观光重地，但因游客数量持续下滑，正面临被取消观光区资格、断绝政府财政支持、走向衰败的危机。
+故事发生在**近未来的横滨**，一个被设定为「**HAMA 18 区**」的「**独立観光特区**」（Independent Tourism Special Zone）。在该未来时间线，JPN 国内观光业竞争白热化，热门观光地以"独立特区"形式独立运营。HAMA 18 区曾经是顶级特区之一，如今"落ちぶれてしまい見る影もない"（衰落得不成样子），正面临被取消观光区资格、断绝政府财政支持的危机。
 
 ### 核心驱动事件
 新就任的 **HAMA 0 区区长 大黑可不可（Kafka Oguro）**——主角（玩家扮演的「**浜咲椛 / 浜咲楓**」二选一）的青梅竹马——决定在一年内挽救 HAMA-18 的观光资格。他联合全境 **20 位区长**（即 HAMA 1〜18 + HAMA 0 = 20 块辖区），通过组建偶像团体、推出大胆的「**款待战略（Hospitality Strategy）**」来吸引游客回归。
 
 ### 故事大纲
-- **主角**：浜咲家的双胞胎兄妹之一（"Hero & Heroine"，分别为 椛 Momiji / 楓 Kaede），HAMA TOURS 的「Chief」
-- **创业伙伴**：青梅竹马 Kafka Oguro，刚被任命为 HAMA 0 区长，同时是 "HAMA Tours" 公司的总裁兼 CEO
+- **主角**：浜咲家的双胞胎兄妹之一（"Hero & Heroine"，分别为 椛 Momiji / 楓 Kaede），生于 HAMA 长于 HAMA，是 HAMA TOURS（**HAMAツアーズ**）的「Chief」
+- **创业伙伴**：青梅竹马 Kafka Oguro，被任命为 HAMA 0 区长，同时是 HAMAツアーズ 的总裁兼 CEO
 - **核心机制**：通过组建 4 个偶像组合（按时段命名：朝/昼/夕/夜），让区长们以偶像身份吸引粉丝、刺激旅游消费
-- **目标**：在年限内重建 HAMA-18 的观光价值，保住特别观光区的法定地位
-- **叙事重心**：偶像 RPG 框架，但更强调"地域振兴 + 青春群像"，每位区长背后都有自己的辖区与人生故事
+- **目标**：在年限内重建 HAMA 18 区的观光价值，保住特别观光区的法定地位
+- **叙事重心**：「**おもてなしに賭ける情熱**」（燃烧在款待之上的热情）+「少し不思議なハプニング」（微妙不可思议的意外）；主角的旅伴是"**誰にも言えない荷物を抱えた観光区長たち**"——背负着不能言说包袱的观光区长们
+
+### 核心隐喻：旅 = カセットテープ（卡带）
+
+官方在首页核心文案中给出了贯穿全作的设计语言：
+
+> "The memories of a trip are like a single cassette tape. On the A side of the tape, we record the many wonderful memories made during the trip. On the B side, we record the hardships and happenings that sometimes inevitably occur during the trip. It is never one or the other. Both sides of the tape are one and the same, and both are important travel memories for the traveler."
+
+—— **旅程的记忆如同一盘卡带**，A 面记录美好回忆，B 面记录辛苦与意外，两面合一才是完整的旅行。这一隐喻直接映射到游戏内的 `18TRIP Cassette ♯01–♯13`（各组合 OST），也是本项目活动站可以借鉴的视觉/文案语言。
 
 ---
 
@@ -40,10 +52,12 @@
 
 | 中文 | 原文 | 解释 |
 |------|------|------|
-| HAMA-18 | HAMA-18 / ハマ18 | 故事舞台，近未来横滨的特别观光区，由 18 个辖区组成（加上 HAMA 0 共 19 块） |
+| HAMA 18 区 | HAMA18区 / HAMA-18 | 故事舞台，近未来横滨的「**独立観光特区**」，由 18 个辖区组成（加上 HAMA 0 共 19 块） |
+| 独立観光特区 | 独立観光特区（Independent Tourism Special Zone） | JPN 内热门观光地的法定运营形式 |
 | 区 / 辖区 | WARD / 区（HAMA n） | 行政单位，每区有一名区长（Mayor），编号 0–18 |
-| 区长 | Ward Mayor / 区長 | 每区的最高负责人，也是偶像组合成员 |
-| HAMA TOURS | HAMA TOURS / ハマツアーズ | Kafka 创立的旅游公司，统筹所有偶像企划 |
+| 区长 | 観光区長 / Ward Mayor | 每区的最高负责人，也是偶像组合成员 |
+| HAMAツアーズ | HAMAツアーズ / HAMA TOURS | Kafka 创立的旅游公司，统筹所有偶像企划 |
+| おもてなし | おもてなし（Omotenashi） | 日本传统款待之心，本作核心主题词 |
 | Chief | Chief / チーフ | HAMA TOURS 的总指挥（即玩家扮演的浜咲椛/楓） |
 | Conductor | Conductor / コンダクター | 每个偶像组合的随团经理人/统筹 |
 | 款待战 | Omotenashi Battle / おもてなしバトル | 游戏主战斗系统，以"款待游客"为隐喻的卡牌对战 |

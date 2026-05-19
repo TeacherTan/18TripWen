@@ -3,6 +3,7 @@
 > **用途**：本项目（NFC 打卡活动站）角色信息参考，与 `src/assets/Chibi_character_splitting/` 素材一一对应
 > **信息时点**：2026-05
 > **主要来源**：[wiki.18t.rip](https://wiki.18t.rip/wiki/Main_Characters)
+> **官方交叉验证**：2026-05-19 已对照 [18trip.jp](https://18trip.jp/) — 全部 20 区长 + 4 Conductor 的姓名、罗马音、分组归属完全一致（官方 URL slug 与本表一一对应）。详见 `00-verification-report.md`
 > 注：所有 Image Color 均来自 wiki 角色页 infobox，可视为官方主题色
 
 ---
