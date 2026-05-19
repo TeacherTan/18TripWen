@@ -230,6 +230,20 @@ router.put('/spots/:id', async (req, res, next) => {
     const editable = ['name', 'asset_key', 'display_order', 'active', 'type', 'description', 'activity_intro', 'floor', 'pos_x', 'pos_y'];
     const fields = [];
     const params = [];
+
+    // Validate type if provided
+    if (req.body && req.body.type != null && !['venue', 'npc'].includes(req.body.type)) {
+      return res.status(400).json({ error: 'invalid type' });
+    }
+
+    // Validate floor range if provided
+    if (req.body && req.body.floor != null) {
+      const floor = Number(req.body.floor);
+      if (isNaN(floor) || floor < 1 || floor > 4) {
+        return res.status(400).json({ error: 'floor must be between 1 and 4' });
+      }
+    }
+
     for (const key of editable) {
       if (req.body && Object.prototype.hasOwnProperty.call(req.body, key)) {
         params.push(req.body[key]);
