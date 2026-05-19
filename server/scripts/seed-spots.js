@@ -49,7 +49,7 @@ function buildNpcs() {
 }
 
 async function upsertVenue(s, order) {
-  const token = `11111111-0000-0000-0000-${String(order).padStart(12, '0')}`;
+  const token = `a0000000-0000-0000-0000-${order.toString(16).padStart(12, '0')}`;
   await query(
     `INSERT INTO check_in_spots (name, asset_key, display_order, spot_token, type, description)
      VALUES ($1, $2, $3, $4, 'venue', $5)
@@ -67,7 +67,7 @@ async function upsertVenue(s, order) {
 
 async function upsertNpc(n, order) {
   const idx = order - VENUES.length;
-  const token = `22222222-0000-0000-0000-${String(idx).padStart(12, '0')}`;
+  const token = `b0000000-0000-0000-0000-${idx.toString(16).padStart(12, '0')}`;
   await query(
     `INSERT INTO check_in_spots
        (name, asset_key, display_order, spot_token, type, description, activity_intro, floor, pos_x, pos_y)
