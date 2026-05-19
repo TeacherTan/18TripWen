@@ -205,14 +205,21 @@ router.get('/spots', async (req, res, next) => {
 
 router.post('/spots', async (req, res, next) => {
   try {
-    const { name, asset_key, display_order } = req.body || {};
+    const { name, asset_key, display_order, type, description, activity_intro, floor, pos_x, pos_y } = req.body || {};
     if (!name || !asset_key || display_order === undefined) {
       return res.status(400).json({ error: 'name, asset_key, display_order are required' });
     }
+    const spotType = type || 'venue';
+    if (!['venue', 'npc'].includes(spotType)) return res.status(400).json({ error: 'invalid type' });
+    if (spotType === 'npc' && (floor == null || pos_x == null || pos_y == null)) {
+      return res.status(400).json({ error: 'npc spot requires floor, pos_x, pos_y' });
+    }
     const { rows } = await query(
-      `INSERT INTO check_in_spots (name, asset_key, display_order)
-       VALUES ($1, $2, $3) RETURNING *`,
-      [name, asset_key, display_order],
+      `INSERT INTO check_in_spots
+         (name, asset_key, display_order, type, description, activity_intro, floor, pos_x, pos_y)
+       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9) RETURNING *`,
+      [name, asset_key, display_order, spotType, description ?? '', activity_intro ?? null,
+       spotType === 'npc' ? floor : null, spotType === 'npc' ? pos_x : null, spotType === 'npc' ? pos_y : null],
     );
     res.status(201).json({ spot: rows[0] });
   } catch (err) { next(err); }
@@ -220,13 +227,15 @@ router.post('/spots', async (req, res, next) => {
 
 router.put('/spots/:id', async (req, res, next) => {
   try {
-    const { name, asset_key, display_order, active } = req.body || {};
+    const editable = ['name', 'asset_key', 'display_order', 'active', 'type', 'description', 'activity_intro', 'floor', 'pos_x', 'pos_y'];
     const fields = [];
     const params = [];
-    if (name !== undefined) { params.push(name); fields.push(`name = $${params.length}`); }
-    if (asset_key !== undefined) { params.push(asset_key); fields.push(`asset_key = $${params.length}`); }
-    if (display_order !== undefined) { params.push(display_order); fields.push(`display_order = $${params.length}`); }
-    if (active !== undefined) { params.push(active); fields.push(`active = $${params.length}`); }
+    for (const key of editable) {
+      if (req.body && Object.prototype.hasOwnProperty.call(req.body, key)) {
+        params.push(req.body[key]);
+        fields.push(`${key} = $${params.length}`);
+      }
+    }
     if (fields.length === 0) return res.status(400).json({ error: 'no fields to update' });
 
     params.push(req.params.id);
