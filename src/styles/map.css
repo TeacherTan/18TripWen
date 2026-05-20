@@ -1,0 +1,45 @@
+/* src/styles/map.css */
+.map-page {
+  min-height: 100vh; background: #fff;
+  display: flex; flex-direction: column;
+}
+.map-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 16px; border-bottom: 1px solid #eee;
+}
+.map-back { color: #555; text-decoration: none; font-size: 14px; }
+.map-title { font-size: 18px; margin: 0; font-weight: 600; }
+.map-spacer { width: 48px; }
+
+/* hub 页：左右两个正方形 card */
+.map-hub {
+  flex: 1;
+  display: flex; align-items: center; justify-content: center;
+  gap: 4vw; padding: 6vw;
+}
+.map-card {
+  width: 40vw; aspect-ratio: 1 / 1; max-width: 240px; max-height: 240px;
+  border: 2px solid #1a1a1a; border-radius: 16px;
+  display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 4px;
+  text-decoration: none; color: #1a1a1a;
+  background: #fafafa;
+  transition: transform 0.2s, background 0.2s;
+}
+.map-card:active { transform: scale(0.97); background: #f0f0f0; }
+.map-card__label { font-size: 18px; font-weight: 700; }
+.map-card__sublabel { font-size: 12px; color: #888; letter-spacing: 0.1em; }
+
+/* 长沙图占位 */
+.map-coming-soon {
+  flex: 1;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 16px; text-align: center;
+}
+.map-coming-soon__pulse { animation: cs-breathe 2.4s ease-in-out infinite; }
+@keyframes cs-breathe {
+  0%, 100% { opacity: 0.55; }
+  50%      { opacity: 1; }
+}
+.map-coming-soon__big { font-size: 32px; font-weight: 700; color: #1a1a1a; }
+.map-coming-soon__sub { font-size: 14px; color: #888; letter-spacing: 0.3em; margin-top: 6px; }
+.map-coming-soon__hint { font-size: 13px; color: #aaa; }
