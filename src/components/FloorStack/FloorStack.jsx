@@ -1,11 +1,33 @@
-import { useState } from 'react'
+import { useState, useRef } from 'react'
 import styles from './FloorStack.module.css'
 
 export default function FloorStack({ floors, npcs = [], highlighted, onPickNpc }) {
   const [active, setActive] = useState(floors[0]?.id ?? 1)
 
+  const dragRef = useRef({ startY: null })
+
+  const onPointerDown = (e) => { dragRef.current.startY = e.clientY }
+  const onPointerUp = (e) => {
+    const { startY } = dragRef.current
+    if (startY == null) return
+    const dy = e.clientY - startY
+    dragRef.current.startY = null
+    if (Math.abs(dy) < 60) return
+    setActive((cur) => {
+      const ids = floors.map((f) => f.id)
+      const idx = ids.indexOf(cur)
+      const next = dy < 0 ? Math.min(idx + 1, ids.length - 1) : Math.max(idx - 1, 0)
+      return ids[next]
+    })
+  }
+
   return (
-    <div className={styles.stage}>
+    <div
+      className={styles.stage}
+      onPointerDown={onPointerDown}
+      onPointerUp={onPointerUp}
+      onPointerCancel={() => { dragRef.current.startY = null }}
+    >
       <div className={styles.group} data-active={active}>
         {floors.map((f) => (
           <div key={f.id} className={styles.floor} data-index={f.id}>
