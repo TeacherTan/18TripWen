@@ -14,6 +14,7 @@ import Profile from './pages/Profile'
 import MapHub from './pages/Map'
 import MapChangsha from './pages/MapChangsha'
 import MapVenue from './pages/MapVenue'
+import NpcProfile from './pages/NpcProfile'
 import AdminLayout from './pages/admin/AdminLayout'
 import AdminUsers from './pages/admin/AdminUsers'
 import AdminSpots from './pages/admin/AdminSpots'
@@ -46,6 +47,7 @@ function App() {
       <Route path="/map" element={<MapHub />} />
       <Route path="/map/changsha" element={<MapChangsha />} />
       <Route path="/map/venue" element={<MapVenue />} />
+      <Route path="/npc/:id" element={<NpcProfile />} />
       <Route path="/admin" element={<AdminLayout />}>
         <Route index element={<Navigate to="users" replace />} />
         <Route path="users" element={<AdminUsers />} />
