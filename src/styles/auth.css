@@ -6,7 +6,9 @@
   align-items: center;
   justify-content: center;
   padding: 24px;
-  background: #0c1116;
+  background: rgba(12, 17, 22, 0.78);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
   color: #f1f5f9;
   font-family: system-ui, -apple-system, sans-serif;
   text-align: center;
