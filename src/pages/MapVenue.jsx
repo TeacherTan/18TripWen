@@ -1,30 +1,28 @@
-import { useEffect, useState, useRef } from 'react'
-import { Link } from 'react-router-dom'
-import { apiFetch } from '../api/client'
+import { useState } from 'react'
+import { Link, useNavigate } from 'react-router-dom'
 import { FLOORS } from '../data/venueFloors'
+import { MOCK_NPCS } from '../data/mockNpcs'
 import FloorStack from '../components/FloorStack/FloorStack'
 
 export default function MapVenue() {
-  const [npcs, setNpcs] = useState([])
-  const [loading, setLoading] = useState(true)
+  const navigate = useNavigate()
+  const [active, setActive] = useState(FLOORS[0]?.id ?? 1)
   const [highlighted, setHighlighted] = useState(null)
-  const listRefs = useRef({})
 
-  useEffect(() => {
-    apiFetch('/check-in/status')
-      .then((data) => setNpcs(data.spots.filter((s) => s.type === 'npc')))
-      .catch(() => setNpcs([]))
-      .finally(() => setLoading(false))
-  }, [])
+  const npcs = MOCK_NPCS
+  const floorNpcs = npcs.filter((n) => n.floor === active)
 
-  const pick = (npcId) => {
+  const pickPin = (npcId) => {
     setHighlighted(npcId)
-    listRefs.current[npcId]?.scrollIntoView({ behavior: 'smooth', block: 'center' })
-    setTimeout(() => setHighlighted((cur) => (cur === npcId ? null : cur)), 2000)
+    setTimeout(() => setHighlighted((cur) => (cur === npcId ? null : cur)), 1800)
+  }
+
+  const goNpc = (npcId) => {
+    navigate(`/npc/${npcId}`)
   }
 
   return (
-    <div className="map-page">
+    <div className="map-page map-page--venue">
       <header className="map-header">
         <Link to="/map" className="map-back">{'< 返回'}</Link>
         <h1 className="map-title">场馆地图</h1>
@@ -35,26 +33,34 @@ export default function MapVenue() {
         <FloorStack
           floors={FLOORS}
           npcs={npcs}
+          active={active}
+          onActiveChange={setActive}
           highlighted={highlighted}
-          onPickNpc={pick}
+          onPickNpc={pickPin}
         />
 
         <section className="venue-list">
-          <h2>楼层 NPC 列表</h2>
-          {loading ? <p>加载中…</p> : (
+          <h2>
+            {FLOORS.find((f) => f.id === active)?.name}
+            <span> · {floorNpcs.length} 位居民</span>
+          </h2>
+          {floorNpcs.length === 0 ? (
+            <p className="venue-list__empty">本层暂无人物</p>
+          ) : (
             <ul>
-              {npcs.map((n) => (
+              {floorNpcs.map((n) => (
                 <li
                   key={n.id}
-                  ref={(el) => { listRefs.current[n.id] = el }}
                   className={`venue-list__item ${highlighted === n.id ? 'highlighted' : ''}`}
-                  onClick={() => pick(n.id)}
+                  onClick={() => goNpc(n.id)}
+                  style={{ '--theme': n.theme_color }}
                 >
                   <img src="/shumai.png" alt={n.name} className="venue-list__avatar" />
-                  <div>
-                    <div className="venue-list__name">F{n.floor} · {n.name}</div>
+                  <div className="venue-list__body">
+                    <div className="venue-list__name">{n.name}</div>
                     <div className="venue-list__intro">{n.activity_intro || '活动待定'}</div>
                   </div>
+                  <span className="venue-list__arrow">›</span>
                 </li>
               ))}
             </ul>
