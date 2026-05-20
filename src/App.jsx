@@ -13,6 +13,7 @@ import CheckIn from './pages/CheckIn'
 import Profile from './pages/Profile'
 import MapHub from './pages/Map'
 import MapChangsha from './pages/MapChangsha'
+import MapVenue from './pages/MapVenue'
 import AdminLayout from './pages/admin/AdminLayout'
 import AdminUsers from './pages/admin/AdminUsers'
 import AdminSpots from './pages/admin/AdminSpots'
@@ -44,6 +45,7 @@ function App() {
       <Route path="/profile" element={<Profile />} />
       <Route path="/map" element={<MapHub />} />
       <Route path="/map/changsha" element={<MapChangsha />} />
+      <Route path="/map/venue" element={<MapVenue />} />
       <Route path="/admin" element={<AdminLayout />}>
         <Route index element={<Navigate to="users" replace />} />
         <Route path="users" element={<AdminUsers />} />
