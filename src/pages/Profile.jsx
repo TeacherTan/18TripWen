@@ -26,8 +26,10 @@ export default function Profile() {
 
   const venues = status?.spots.filter((s) => s.type === 'venue') ?? []
   const npcs   = status?.spots.filter((s) => s.type === 'npc')   ?? []
+  const extras = status?.spots.filter((s) => s.type === 'extra') ?? []
   const unlockedVenues = venues.filter((s) => s.unlocked).length
   const unlockedNpcs   = npcs.filter((s) => s.unlocked).length
+  const unlockedExtras = extras.filter((s) => s.unlocked).length
 
   return (
     <div className="auth-page profile-page">
@@ -61,6 +63,15 @@ export default function Profile() {
               {npcs.map((s) => <AchievementListItem key={s.id} spot={s} />)}
             </ul>
           </section>
+
+          {extras.length > 0 && (
+            <section className="achievement-section">
+              <h2 className="achievement-section__title">其他成就 <span>({unlockedExtras}/{extras.length})</span></h2>
+              <ul className="achievement-list">
+                {extras.map((s) => <AchievementListItem key={s.id} spot={s} />)}
+              </ul>
+            </section>
+          )}
         </>
       )}
 

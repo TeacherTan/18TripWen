@@ -34,9 +34,9 @@ CREATE TABLE check_in_spots (
   pos_x          NUMERIC(5,2),
   pos_y          NUMERIC(5,2),
   created_at     TIMESTAMPTZ NOT NULL DEFAULT now(),
-  CONSTRAINT chk_spot_type CHECK (type IN ('venue', 'npc')),
+  CONSTRAINT chk_spot_type CHECK (type IN ('venue', 'npc', 'extra')),
   CONSTRAINT chk_npc_geo CHECK (
-    type = 'venue'
+    type IN ('venue', 'extra')
     OR (floor BETWEEN 1 AND 4 AND pos_x IS NOT NULL AND pos_y IS NOT NULL)
   )
 );

@@ -108,6 +108,8 @@ router.post('/', authenticate, async (req, res, next) => {
       [req.auth.userId, spot.id],
     );
 
+    await maybeAutoUnlockPlan(req.auth.userId);
+
     const totals = await getProgress(req.auth.userId);
     res.json({
       success: true,
@@ -119,6 +121,25 @@ router.post('/', authenticate, async (req, res, next) => {
     next(err);
   }
 });
+
+// 前 14 个基础成就（4 venue + 10 npc）全部完成时，自动为用户解锁 '计划通'
+async function maybeAutoUnlockPlan(userId) {
+  const { rows } = await query(
+    `SELECT
+       (SELECT COUNT(*) FROM check_in_spots WHERE active = true AND type IN ('venue','npc')) AS base_total,
+       (SELECT COUNT(*) FROM check_ins ci
+          JOIN check_in_spots s ON s.id = ci.spot_id
+         WHERE ci.user_id = $1 AND s.active = true AND s.type IN ('venue','npc')) AS base_done`,
+    [userId],
+  );
+  if (Number(rows[0].base_total) === 0 || Number(rows[0].base_done) < Number(rows[0].base_total)) return;
+  await query(
+    `INSERT INTO check_ins (user_id, spot_id)
+     SELECT $1, id FROM check_in_spots WHERE asset_key = 'extra_plan' AND active = true
+     ON CONFLICT (user_id, spot_id) DO NOTHING`,
+    [userId],
+  );
+}
 
 async function getProgress(userId) {
   const { rows } = await query(
