@@ -1,19 +1,39 @@
-import { useRef } from 'react'
+import { useRef, useState } from 'react'
 import styles from './FloorStack.module.css'
 
 export default function FloorStack({ floors, npcs = [], active, onActiveChange, highlighted, onPickNpc }) {
-  const dragRef = useRef({ startY: null })
+  const dragRef = useRef({ startY: null, moved: false })
+  const [expanded, setExpanded] = useState(false)
 
   const onPointerDown = (e) => {
     if (e.target.closest('button')) return
     dragRef.current.startY = e.clientY
+    dragRef.current.moved = false
+  }
+  const onPointerMove = (e) => {
+    const { startY } = dragRef.current
+    if (startY == null) return
+    if (Math.abs(e.clientY - startY) > 6) dragRef.current.moved = true
   }
   const onPointerUp = (e) => {
-    const { startY } = dragRef.current
+    const { startY, moved } = dragRef.current
     dragRef.current.startY = null
+    dragRef.current.moved = false
     if (startY == null) return
     const dy = e.clientY - startY
-    if (Math.abs(dy) < 60) return
+
+    if (!moved || Math.abs(dy) < 60) {
+      const floorEl = e.target.closest('[data-floor-id]')
+      if (floorEl) {
+        const id = Number(floorEl.dataset.floorId)
+        if (id !== active) onActiveChange?.(id)
+        setExpanded(true)
+      } else {
+        setExpanded(false)
+      }
+      return
+    }
+
     const ids = floors.map((f) => f.id)
     const idx = ids.indexOf(active)
     if (idx < 0) return
@@ -25,8 +45,9 @@ export default function FloorStack({ floors, npcs = [], active, onActiveChange, 
     <div
       className={styles.stage}
       onPointerDown={onPointerDown}
+      onPointerMove={onPointerMove}
       onPointerUp={onPointerUp}
-      onPointerCancel={() => { dragRef.current.startY = null }}
+      onPointerCancel={() => { dragRef.current.startY = null; dragRef.current.moved = false }}
     >
       <div className={styles.group}>
         {floors.map((f) => {
@@ -38,15 +59,16 @@ export default function FloorStack({ floors, npcs = [], active, onActiveChange, 
               key={f.id}
               className={styles.floor}
               data-active={isActive}
+              data-floor-id={f.id}
               style={{
-                transform: `translate(-50%, -50%) translateY(${diff * -55}%) translateZ(${-abs * 80}px) scale(${1 - abs * 0.08})`,
-                opacity: isActive ? 1 : Math.max(0.18, 1 - abs * 0.3),
+                transform: `translate(-50%, -50%) translateY(${diff * (expanded ? -85 : -22)}%) translateZ(${-abs * (expanded ? 40 : 6)}px) scale(${1 - abs * (expanded ? 0.05 : 0.02)})`,
+                opacity: isActive ? 1 : Math.max(expanded ? 0.4 : 0.6, 1 - abs * (expanded ? 0.25 : 0.12)),
                 zIndex: 10 - abs,
-                pointerEvents: isActive ? 'auto' : 'none',
+                cursor: isActive ? 'default' : 'pointer',
               }}
             >
               <img src={f.image} alt={f.name} className={styles.floorImg} />
-              {npcs.filter((n) => n.floor === f.id).map((n) => (
+              {isActive && npcs.filter((n) => n.floor === f.id).map((n) => (
                 <button
                   key={n.id}
                   className={styles.pin}
