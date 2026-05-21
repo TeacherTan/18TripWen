@@ -129,6 +129,7 @@ UPLOAD_DIR=./uploads
 
 - admin 用户名: `admin` / 密码: `admin123`
 - admin nfc_token: 每次 db:reset 后从终端输出复制
+- **testuser** 用户名: `testuser` / 密码: `test123`（普通用户角色，自动解锁全部成就，用于成就页前端测试）
 - 6 个打卡点 spot_token: 见 `docs/testing.md` 第二节
 
 详细测试用例见 [`docs/testing.md`](docs/testing.md)。
