@@ -1,5 +1,6 @@
 /* src/styles/map.css */
 .map-page {
+  position: relative;
   min-height: 100vh;
   background-image: url('../assets/main-page/background.png');
   background-size: cover;
@@ -7,8 +8,31 @@
   background-repeat: no-repeat;
   background-attachment: fixed;
   display: flex; flex-direction: column;
+  overflow: hidden;
+}
+
+.map-deco {
+  position: absolute;
+  pointer-events: none;
+  user-select: none;
+  z-index: 2;
+}
+
+.map-deco--tl {
+  width: 30%;
+  top: 31%;
+  left: 2%;
+}
+
+.map-deco--br {
+  width: 30%;
+  bottom: 25%;
+  right: 0%;
+  z-index: 2;
 }
 .map-header {
+  position: relative;
+  z-index: 1;
   display: flex; align-items: center; justify-content: space-between;
   padding: 16px; border-bottom: 1px solid #eee;
 }
@@ -18,12 +42,15 @@
 
 /* hub 页：左右两个正方形 card */
 .map-hub {
+  position: relative;
+  width: 100%;
+  z-index: 1;
   flex: 1;
   display: flex; align-items: center; justify-content: center;
   gap: 4vw; padding: 6vw;
 }
 .map-card {
-  width: 40vw; aspect-ratio: 1 / 1; max-width: 240px; max-height: 240px;
+  width: 35vw; aspect-ratio: 1 / 1; max-width: 240px; max-height: 240px;
   border: 2px solid #1a1a1a; border-radius: 16px;
   display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 4px;
   text-decoration: none; color: #1a1a1a;

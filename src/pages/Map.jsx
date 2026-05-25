@@ -1,8 +1,12 @@
 import { Link } from 'react-router-dom'
+import momiji from '../assets/main-page/momiji.png'
+import kaede from '../assets/main-page/kaede.png'
 
 export default function MapHub() {
   return (
     <div className="map-page">
+      <img src={momiji} className="map-deco map-deco--tl" alt="" draggable={false} />
+      <img src={kaede}  className="map-deco map-deco--br" alt="" draggable={false} />
       <header className="map-header">
         <Link to="/" className="map-back">{'< 返回'}</Link>
         <h1 className="map-title">地图</h1>
