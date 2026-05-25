@@ -1,7 +1,7 @@
 export const MOCK_NPCS = [
   // === 1F 朝班 R1ze ===
   {
-    id: 'npc-kafka', name: '大黑可不可',
+    id: 'npc-kafka', asset_key: 'npc_kafka', name: '大黑可不可',
     jp_name: '大黒 可不可 (Oguro Kafuka)',
     floor: 1, pos_x: 32, pos_y: 38,
     activity_intro: 'HAMA 0 区长见面会',
@@ -11,7 +11,7 @@ export const MOCK_NPCS = [
     unlocked: false,
   },
   {
-    id: 'npc-renga', name: '西园练牙',
+    id: 'npc-renga', asset_key: 'npc_renga', name: '西园练牙',
     jp_name: '西園 練牙 (Nishizono Renga)',
     floor: 1, pos_x: 62, pos_y: 52,
     activity_intro: 'R1ze 队长粉丝沙龙',
@@ -21,7 +21,7 @@ export const MOCK_NPCS = [
     unlocked: false,
   },
   {
-    id: 'npc-lu', name: '鹿礼光',
+    id: 'npc-lu', asset_key: 'npc_lu', name: '鹿礼光',
     jp_name: '鹿 礼光 (Lù Lǐguāng)',
     floor: 1, pos_x: 48, pos_y: 70,
     activity_intro: 'Tokaku Company 商务洽谈',
@@ -33,7 +33,7 @@ export const MOCK_NPCS = [
 
   // === 2F 昼班 Day2 ===
   {
-    id: 'npc-nanaki', name: '斜木七基',
+    id: 'npc-nanaki', asset_key: 'npc_nanaki', name: '斜木七基',
     jp_name: '斜木 七基 (Nanamegi Nanaki)',
     floor: 2, pos_x: 35, pos_y: 35,
     activity_intro: 'Gentle Light 音乐部演奏',
@@ -43,7 +43,7 @@ export const MOCK_NPCS = [
     unlocked: false,
   },
   {
-    id: 'npc-kiroku', name: '衣川季肋',
+    id: 'npc-kiroku', asset_key: 'npc_kiroku', name: '衣川季肋',
     jp_name: '衣川 季肋 (Kinugawa Kiroku)',
     floor: 2, pos_x: 65, pos_y: 45,
     activity_intro: '美术部展览',
@@ -53,7 +53,7 @@ export const MOCK_NPCS = [
     unlocked: false,
   },
   {
-    id: 'npc-ushio', name: '久乐间潮',
+    id: 'npc-ushio', asset_key: 'npc_ushio', name: '久乐间潮',
     jp_name: '久楽間 潮 (Kurama Ushio)',
     floor: 2, pos_x: 50, pos_y: 68,
     activity_intro: '烹饪部料理品鉴',
@@ -65,7 +65,7 @@ export const MOCK_NPCS = [
 
   // === 3F 夕班 Ev3ns ===
   {
-    id: 'npc-chihiro', name: '夏烧千弥',
+    id: 'npc-chihiro', asset_key: 'npc_chihiro', name: '夏烧千弥',
     jp_name: '夏焼 千弥 (Natsuyaki Chihiro)',
     floor: 3, pos_x: 38, pos_y: 42,
     activity_intro: 'Alpha Dazzler 直播现场',
@@ -75,7 +75,7 @@ export const MOCK_NPCS = [
     unlocked: false,
   },
   {
-    id: 'npc-tao', name: '木之内太绪',
+    id: 'npc-tao', asset_key: 'npc_tao', name: '木之内太绪',
     jp_name: '木ノ内 太緒 (Kinouchi Tao)',
     floor: 3, pos_x: 62, pos_y: 60,
     activity_intro: '游戏机厅挑战赛',
@@ -87,7 +87,7 @@ export const MOCK_NPCS = [
 
   // === 4F 夜班 L4mps ===
   {
-    id: 'npc-toi', name: '白光糖衣',
+    id: 'npc-toi', asset_key: 'npc_toi', name: '白光糖衣',
     jp_name: '白光 糖衣 (Shiramitsu Toi)',
     floor: 4, pos_x: 40, pos_y: 45,
     activity_intro: 'Angel Eye 占卜体验',
@@ -97,7 +97,7 @@ export const MOCK_NPCS = [
     unlocked: false,
   },
   {
-    id: 'npc-ryui', name: '白光琉衣',
+    id: 'npc-ryui', asset_key: 'npc_ryui', name: '白光琉衣',
     jp_name: '白光 琉衣 (Shiramitsu Ryui)',
     floor: 4, pos_x: 60, pos_y: 60,
     activity_intro: 'Arataka 御守发放',

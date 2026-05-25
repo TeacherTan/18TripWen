@@ -78,7 +78,7 @@ export default function FloorStack({ floors, npcs = [], active, onActiveChange, 
                   onClick={(e) => { e.stopPropagation(); onPickNpc?.(n.id) }}
                   title={n.name}
                 >
-                  <img src="/shumai.png" alt={n.name} />
+                  <img src={n.asset_key ? `/npc/${n.asset_key}.png` : "/shumai.png"} alt={n.name} />
                 </button>
               ))}
             </div>

@@ -16,7 +16,7 @@ export default function NpcProfile() {
       </header>
 
       <div className="npc-hero">
-        <img src="/shumai.png" alt={npc.name} className="npc-hero__avatar" />
+        <img src={npc.asset_key ? `/npc/${npc.asset_key}.png` : "/shumai.png"} alt={npc.name} className="npc-hero__avatar" />
         <div className="npc-hero__meta">
           <h1>{npc.name}</h1>
           <p>{npc.jp_name}</p>

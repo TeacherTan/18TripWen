@@ -55,7 +55,7 @@ export default function MapVenue() {
                   onClick={() => goNpc(n.id)}
                   style={{ '--theme': n.theme_color }}
                 >
-                  <img src="/shumai.png" alt={n.name} className="venue-list__avatar" />
+                  <img src={n.asset_key ? `/npc/${n.asset_key}.png` : "/shumai.png"} alt={n.name} className="venue-list__avatar" />
                   <div className="venue-list__body">
                     <div className="venue-list__name">{n.name}</div>
                     <div className="venue-list__intro">{n.activity_intro || '活动待定'}</div>
