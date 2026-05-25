@@ -3,6 +3,7 @@ import './styles/global.css'
 import './styles/auth.css'
 import './styles/achievement.css'
 import './styles/admin.css'
+import './styles/map.css'
 import Hero from './components/Hero/Hero'
 import Menu from './components/Menu/Menu'
 import Welcome from './pages/Welcome'
@@ -10,6 +11,10 @@ import Register from './pages/Register'
 import Login from './pages/Login'
 import CheckIn from './pages/CheckIn'
 import Profile from './pages/Profile'
+import MapHub from './pages/Map'
+import MapChangsha from './pages/MapChangsha'
+import MapVenue from './pages/MapVenue'
+import NpcProfile from './pages/NpcProfile'
 import AdminLayout from './pages/admin/AdminLayout'
 import AdminUsers from './pages/admin/AdminUsers'
 import AdminSpots from './pages/admin/AdminSpots'
@@ -39,6 +44,10 @@ function App() {
       <Route path="/login" element={<Login />} />
       <Route path="/checkin" element={<CheckIn />} />
       <Route path="/profile" element={<Profile />} />
+      <Route path="/map" element={<MapHub />} />
+      <Route path="/map/changsha" element={<MapChangsha />} />
+      <Route path="/map/venue" element={<MapVenue />} />
+      <Route path="/npc/:id" element={<NpcProfile />} />
       <Route path="/admin" element={<AdminLayout />}>
         <Route index element={<Navigate to="users" replace />} />
         <Route path="users" element={<AdminUsers />} />

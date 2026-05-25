@@ -21,13 +21,24 @@ CREATE TABLE users (
 );
 
 CREATE TABLE check_in_spots (
-  id            UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  name          VARCHAR(50) NOT NULL,
-  spot_token    UUID UNIQUE NOT NULL DEFAULT gen_random_uuid(),
-  asset_key     VARCHAR(50) NOT NULL,
-  display_order SMALLINT NOT NULL,
-  active        BOOLEAN NOT NULL DEFAULT true,
-  created_at    TIMESTAMPTZ NOT NULL DEFAULT now()
+  id             UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  name           VARCHAR(50) NOT NULL,
+  spot_token     UUID UNIQUE NOT NULL DEFAULT gen_random_uuid(),
+  asset_key      VARCHAR(50) NOT NULL,
+  display_order  SMALLINT NOT NULL,
+  active         BOOLEAN NOT NULL DEFAULT true,
+  type           VARCHAR(10) NOT NULL DEFAULT 'venue',
+  description    TEXT NOT NULL DEFAULT '',
+  activity_intro TEXT,
+  floor          SMALLINT,
+  pos_x          NUMERIC(5,2),
+  pos_y          NUMERIC(5,2),
+  created_at     TIMESTAMPTZ NOT NULL DEFAULT now(),
+  CONSTRAINT chk_spot_type CHECK (type IN ('venue', 'npc', 'extra')),
+  CONSTRAINT chk_npc_geo CHECK (
+    type IN ('venue', 'extra')
+    OR (floor BETWEEN 1 AND 4 AND pos_x IS NOT NULL AND pos_y IS NOT NULL)
+  )
 );
 
 CREATE TABLE check_ins (

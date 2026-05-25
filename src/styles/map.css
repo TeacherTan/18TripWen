@@ -1,0 +1,194 @@
+/* src/styles/map.css */
+.map-page {
+  min-height: 100vh; background: #fff;
+  display: flex; flex-direction: column;
+}
+.map-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 16px; border-bottom: 1px solid #eee;
+}
+.map-back { color: #555; text-decoration: none; font-size: 14px; }
+.map-title { font-size: 18px; margin: 0; font-weight: 600; }
+.map-spacer { width: 48px; }
+
+/* hub 页：左右两个正方形 card */
+.map-hub {
+  flex: 1;
+  display: flex; align-items: center; justify-content: center;
+  gap: 4vw; padding: 6vw;
+}
+.map-card {
+  width: 40vw; aspect-ratio: 1 / 1; max-width: 240px; max-height: 240px;
+  border: 2px solid #1a1a1a; border-radius: 16px;
+  display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 4px;
+  text-decoration: none; color: #1a1a1a;
+  background: #fafafa;
+  transition: transform 0.2s, background 0.2s;
+}
+.map-card:active { transform: scale(0.97); background: #f0f0f0; }
+.map-card__label { font-size: 18px; font-weight: 700; }
+.map-card__sublabel { font-size: 12px; color: #888; letter-spacing: 0.1em; }
+
+/* 长沙图占位 */
+.map-coming-soon {
+  flex: 1;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 16px; text-align: center;
+}
+.map-coming-soon__pulse { animation: cs-breathe 2.4s ease-in-out infinite; }
+@keyframes cs-breathe {
+  0%, 100% { opacity: 0.55; }
+  50%      { opacity: 1; }
+}
+.map-coming-soon__big { font-size: 32px; font-weight: 700; color: #1a1a1a; }
+.map-coming-soon__sub { font-size: 14px; color: #888; letter-spacing: 0.3em; margin-top: 6px; }
+.map-coming-soon__hint { font-size: 13px; color: #aaa; }
+
+/* === 场馆图 === */
+.map-page--venue {
+  height: 100vh;
+  min-height: 0;
+  overflow: hidden;
+}
+.map-venue {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  padding: 0;
+}
+.venue-list {
+  flex: 0 0 40%;
+  overflow-y: auto;
+  background: #fafafa;
+  border-top: 1px solid #e5e5e5;
+  padding: 12px 16px 24px;
+}
+.venue-list h2 {
+  font-size: 14px;
+  color: #1a1a1a;
+  margin: 0 0 10px;
+  font-weight: 600;
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+}
+.venue-list h2 span {
+  font-size: 12px;
+  color: #888;
+  font-weight: 400;
+}
+.venue-list ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.venue-list__empty {
+  color: #999;
+  font-size: 13px;
+  text-align: center;
+  padding: 24px 0;
+}
+.venue-list__item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  border: 1px solid #eee;
+  border-left: 4px solid var(--theme, #888);
+  border-radius: 10px;
+  background: #fff;
+  margin-bottom: 8px;
+  cursor: pointer;
+  transition: background 0.2s, box-shadow 0.2s, transform 0.15s;
+}
+.venue-list__item:active {
+  transform: scale(0.98);
+}
+.venue-list__item.highlighted {
+  background: #FFFBEA;
+  box-shadow: 0 0 0 2px #FFD84D;
+}
+.venue-list__avatar {
+  width: 40px;
+  height: 40px;
+  object-fit: contain;
+  border-radius: 12px;
+  background: #f5f5f5;
+  flex-shrink: 0;
+}
+.venue-list__body {
+  flex: 1;
+  min-width: 0;
+}
+.venue-list__name {
+  font-weight: 600;
+  font-size: 14px;
+  color: #1a1a1a;
+}
+.venue-list__intro {
+  font-size: 12px;
+  color: #888;
+  margin-top: 2px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.venue-list__arrow {
+  color: #ccc;
+  font-size: 22px;
+  flex-shrink: 0;
+}
+
+/* === NPC 个人页 === */
+.npc-page {
+  min-height: 100vh;
+  background: #fff;
+  display: flex;
+  flex-direction: column;
+}
+.npc-hero {
+  padding: 32px 20px 24px;
+  background: linear-gradient(180deg, var(--theme, #888) 0%, rgba(255, 255, 255, 0) 100%);
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+.npc-hero__avatar {
+  width: 84px;
+  height: 84px;
+  border-radius: 999px;
+  background: #fff;
+  padding: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  object-fit: contain;
+}
+.npc-hero__meta h1 {
+  margin: 0;
+  font-size: 22px;
+  color: #1a1a1a;
+}
+.npc-hero__meta p {
+  margin: 4px 0 0;
+  font-size: 13px;
+  color: #555;
+}
+.npc-body {
+  padding: 20px;
+}
+.npc-body section {
+  margin-bottom: 18px;
+}
+.npc-body h2 {
+  font-size: 13px;
+  color: #888;
+  margin: 0 0 6px;
+  font-weight: 500;
+  letter-spacing: 0.05em;
+}
+.npc-body p {
+  margin: 0;
+  font-size: 15px;
+  color: #1a1a1a;
+  line-height: 1.6;
+}

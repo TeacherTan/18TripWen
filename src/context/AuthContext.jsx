@@ -15,7 +15,10 @@ export function AuthProvider({ children }) {
       return;
     }
     apiFetch('/auth/me')
-      .then((data) => setUser(data.user))
+      .then((data) => {
+        // 若 /auth/me 在途中有新登录替换了 JWT，丢弃旧响应避免覆盖新用户状态
+        if (getStoredJwt() === token) setUser(data.user);
+      })
       .catch(() => setStoredJwt(null))
       .finally(() => setLoading(false));
   }, []);

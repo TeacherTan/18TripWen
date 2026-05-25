@@ -1,0 +1,127 @@
+.stage {
+  position: relative;
+  width: 100%;
+  flex: 1;
+  min-height: 0;
+  perspective: 1500px;
+  overflow: hidden;
+  background: #f8f8f8;
+}
+.group {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: min(78%, 460px);
+  aspect-ratio: 4 / 3;
+  transform: translate(-50%, -50%) rotateX(38deg) rotateZ(-6deg);
+  transform-style: preserve-3d;
+}
+.floor {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 100%;
+  height: 100%;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+  transition: transform 0.45s cubic-bezier(.22,.61,.36,1), opacity 0.45s ease;
+  transform-origin: 50% 50%;
+}
+.floor[data-active="true"] {
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.25);
+}
+.floorImg {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* === NPC 标注 === */
+.pin {
+  position: absolute;
+  width: 36px;
+  height: 36px;
+  border: 2px solid #fff;
+  background: #fff;
+  border-radius: 999px;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  transform: translate(-50%, -50%);
+  transition: transform 0.25s, box-shadow 0.25s, filter 0.25s, opacity 0.25s;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  padding: 0;
+  z-index: 2;
+}
+.pin img {
+  width: 26px;
+  height: 26px;
+  object-fit: contain;
+  pointer-events: none;
+}
+.pin[data-checked="false"] {
+  opacity: 0.7;
+  filter: grayscale(0.5);
+}
+.pin[data-highlighted="true"] {
+  transform: translate(-50%, -50%) scale(1.25);
+  box-shadow: 0 0 0 4px #FFD84D, 0 6px 16px rgba(0, 0, 0, 0.35);
+  z-index: 3;
+}
+
+/* === FloorPicker === */
+.picker {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  z-index: 20;
+}
+.pickerBtn {
+  position: relative;
+  width: 44px;
+  height: 36px;
+  border: 1px solid #888;
+  background: rgba(255, 255, 255, 0.92);
+  border-radius: 8px;
+  font-weight: 700;
+  font-size: 13px;
+  color: #555;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s, border-color 0.2s;
+}
+.pickerBtn:active {
+  background: #f0f0f0;
+}
+.pickerBtn[data-active="true"] {
+  color: #1a1a1a;
+  border-color: #1a1a1a;
+  background: #fff;
+}
+.pickerDot {
+  position: absolute;
+  top: -3px;
+  right: -3px;
+  width: 8px;
+  height: 8px;
+  border-radius: 999px;
+  background: #FFD84D;
+}
+
+.floorName {
+  position: absolute;
+  left: 16px;
+  top: 12px;
+  font-size: 13px;
+  color: #1a1a1a;
+  background: rgba(255, 255, 255, 0.9);
+  padding: 4px 12px;
+  border-radius: 999px;
+  z-index: 20;
+  font-weight: 600;
+}

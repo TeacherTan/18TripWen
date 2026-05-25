@@ -33,6 +33,8 @@ router.get('/status', authenticate, async (req, res, next) => {
   try {
     const { rows } = await query(
       `SELECT s.id, s.name, s.asset_key, s.display_order,
+              s.type, s.description, s.activity_intro,
+              s.floor, s.pos_x, s.pos_y,
               ci.checked_at
        FROM check_in_spots s
        LEFT JOIN check_ins ci
@@ -42,14 +44,24 @@ router.get('/status', authenticate, async (req, res, next) => {
       [req.auth.userId],
     );
 
-    const spots = rows.map((r) => ({
-      id: r.id,
-      name: r.name,
-      asset_key: r.asset_key,
-      display_order: r.display_order,
-      unlocked: !!r.checked_at,
-      checked_at: r.checked_at,
-    }));
+    const spots = rows.map((r) => {
+      const unlocked = !!r.checked_at;
+      return {
+        id: r.id,
+        name: r.name,
+        asset_key: r.asset_key,
+        display_order: r.display_order,
+        type: r.type,
+        floor: r.floor,
+        pos_x: r.pos_x != null ? Number(r.pos_x) : null,
+        pos_y: r.pos_y != null ? Number(r.pos_y) : null,
+        // 服务端遮蔽：未解锁时不返回真实描述
+        description: unlocked ? r.description : null,
+        activity_intro: r.activity_intro, // NPC 活动简介不遮蔽（楼层列表始终显示）
+        unlocked,
+        checked_at: r.checked_at,
+      };
+    });
 
     res.json({
       spots,
@@ -96,6 +108,8 @@ router.post('/', authenticate, async (req, res, next) => {
       [req.auth.userId, spot.id],
     );
 
+    await maybeAutoUnlockPlan(req.auth.userId);
+
     const totals = await getProgress(req.auth.userId);
     res.json({
       success: true,
@@ -107,6 +121,25 @@ router.post('/', authenticate, async (req, res, next) => {
     next(err);
   }
 });
+
+// 前 14 个基础成就（4 venue + 10 npc）全部完成时，自动为用户解锁 '计划通'
+async function maybeAutoUnlockPlan(userId) {
+  const { rows } = await query(
+    `SELECT
+       (SELECT COUNT(*) FROM check_in_spots WHERE active = true AND type IN ('venue','npc')) AS base_total,
+       (SELECT COUNT(*) FROM check_ins ci
+          JOIN check_in_spots s ON s.id = ci.spot_id
+         WHERE ci.user_id = $1 AND s.active = true AND s.type IN ('venue','npc')) AS base_done`,
+    [userId],
+  );
+  if (Number(rows[0].base_total) === 0 || Number(rows[0].base_done) < Number(rows[0].base_total)) return;
+  await query(
+    `INSERT INTO check_ins (user_id, spot_id)
+     SELECT $1, id FROM check_in_spots WHERE asset_key = 'extra_plan' AND active = true
+     ON CONFLICT (user_id, spot_id) DO NOTHING`,
+    [userId],
+  );
+}
 
 async function getProgress(userId) {
   const { rows } = await query(

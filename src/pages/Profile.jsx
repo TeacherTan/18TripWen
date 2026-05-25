@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { Link, Navigate, useLocation } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import { apiFetch } from '../api/client'
+import AchievementListItem from '../components/AchievementListItem/AchievementListItem'
 import AchievementSlot from '../components/AchievementSlot/AchievementSlot'
 
 export default function Profile() {
@@ -23,6 +24,13 @@ export default function Profile() {
   if (authLoading) return <div className="auth-page">加载中…</div>
   if (!user) return <Navigate to="/login" replace />
 
+  const venues = status?.spots.filter((s) => s.type === 'venue') ?? []
+  const npcs   = status?.spots.filter((s) => s.type === 'npc')   ?? []
+  const extras = status?.spots.filter((s) => s.type === 'extra') ?? []
+  const unlockedVenues = venues.filter((s) => s.unlocked).length
+  const unlockedNpcs   = npcs.filter((s) => s.unlocked).length
+  const unlockedExtras = extras.filter((s) => s.unlocked).length
+
   return (
     <div className="auth-page profile-page">
       <header className="profile-header">
@@ -30,32 +38,42 @@ export default function Profile() {
         {user.city && <p className="profile-city">来自 {user.city}</p>}
       </header>
 
-      <section className="achievement-wall">
-        <div className="achievement-wall__header">
-          <h2>成就墙</h2>
-          {status && (
-            <span className="achievement-wall__progress">
-              已集齐 {status.unlocked_count}/{status.total} 张图纸
-            </span>
-          )}
-        </div>
+      {loading && <p>加载成就中…</p>}
+      {error && <p className="auth-error">加载失败：{error}</p>}
 
-        {loading && <p>加载成就中…</p>}
-        {error && <p className="auth-error">加载失败：{error}</p>}
-
-        {status && (
-          <div className="achievement-wall__grid">
-            {status.spots.map((s) => (
-              <AchievementSlot
-                key={s.id}
-                assetKey={s.asset_key}
-                name={s.name}
-                unlocked={s.unlocked}
-              />
-            ))}
+      {status && (
+        <>
+          <div className="achievement-progress">
+            <div className="achievement-progress__bar">
+              <div className="achievement-progress__fill" style={{ width: `${(status.unlocked_count / status.total) * 100}%` }} />
+            </div>
+            <span>已集齐 {status.unlocked_count} / {status.total}</span>
           </div>
-        )}
-      </section>
+
+          <section className="achievement-section">
+            <h2 className="achievement-section__title">场地探索 <span>({unlockedVenues}/{venues.length})</span></h2>
+            <ul className="achievement-list">
+              {venues.map((s) => <AchievementListItem key={s.id} spot={s} />)}
+            </ul>
+          </section>
+
+          <section className="achievement-section">
+            <h2 className="achievement-section__title">角色相遇 <span>({unlockedNpcs}/{npcs.length})</span></h2>
+            <ul className="achievement-list">
+              {npcs.map((s) => <AchievementListItem key={s.id} spot={s} />)}
+            </ul>
+          </section>
+
+          {extras.length > 0 && (
+            <section className="achievement-section">
+              <h2 className="achievement-section__title">其他成就 <span>({unlockedExtras}/{extras.length})</span></h2>
+              <ul className="achievement-list">
+                {extras.map((s) => <AchievementListItem key={s.id} spot={s} />)}
+              </ul>
+            </section>
+          )}
+        </>
+      )}
 
       <div className="auth-actions">
         <Link to="/">返回首页</Link>
@@ -80,11 +98,7 @@ export default function Profile() {
             <p className="checkin-modal__progress">
               已解锁 {modal.unlocked_count}/{modal.total} 张图纸
             </p>
-            <button
-              type="button"
-              className="checkin-modal__close"
-              onClick={() => setModal(null)}
-            >
+            <button type="button" className="checkin-modal__close" onClick={() => setModal(null)}>
               继续探索
             </button>
           </div>
