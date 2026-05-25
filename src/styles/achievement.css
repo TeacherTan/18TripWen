@@ -3,6 +3,11 @@
   align-items: stretch;
   justify-content: flex-start;
   padding-top: 48px;
+  background-image: url('../assets/main-page/background.png');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
 }
 
 .profile-header {
