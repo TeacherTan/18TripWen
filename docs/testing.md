@@ -1,6 +1,6 @@
 # 18TRIP 测试手册
 
-**版本：** Phase 1 + 2 + 3 实现完毕
+**版本：** v0.2 完成（Phase 1-3 + 成就列表 + 地图 + 场馆图）
 **前置依赖：** Docker、Node 18+
 **测试环境：** 本地开发（`localhost:5173` 前端 / `localhost:3000` 后端 / Docker Postgres 5432）
 
