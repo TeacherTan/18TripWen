@@ -9,11 +9,11 @@ import icon5 from '../../assets/Chibi_character_splitting/夜班/nagi.png'
 import buttonBg from '../../assets/button-bg.png'
 
 const menuItems = [
-  { icon: icon1, label: '地图',     sublabel: 'MAP',           to: '/map' },
-  { icon: icon2, label: '区长情报', sublabel: 'CHARACTER',     to: null },
-  { icon: icon3, label: '仓库',     sublabel: 'HUB',           to: '/profile' },
-  { icon: icon4, label: '研修旅行', sublabel: 'TRAVEL PLAY',   to: null },
-  { icon: icon5, label: '联系我们', sublabel: 'CONTACT US',    to: null },
+  { icon: icon1, label: '地图',     sublabel: 'MAP',           to: '/map',     iconOffset: -30, iconShadow: '-3px 4px 4px rgba(0,0,0,0.5)'  },
+  { icon: icon2, label: '区长情报', sublabel: 'CHARACTER',     to: null,       iconOffset: -30, iconShadow: '3px 4px 4px rgba(0,0,0,0.5)'  },
+  { icon: icon3, label: '仓库',     sublabel: 'HUB',           to: '/profile', iconOffset: -38, iconShadow: '-3px 4px 4px rgba(0,0,0,0.5)'  },
+  { icon: icon4, label: '研修旅行', sublabel: 'TRAVEL PLAY',   to: null,       iconOffset: -35, iconShadow: '3px 4px 4px rgba(0,0,0,0.5)'  },
+  { icon: icon5, label: '联系我们', sublabel: 'CONTACT US',    to: null,       iconOffset: -40, iconShadow: '-3px 4px 4px rgba(0,0,0,0.5)'  },
 ]
 
 export default function Menu() {
@@ -28,7 +28,7 @@ export default function Menu() {
             key={item.sublabel}
             className={`${styles.menuItem} ${isReverse ? styles.reverse : ''}`}
             onClick={() => clickable && navigate(item.to)}
-            style={{ cursor: clickable ? 'pointer' : 'default', opacity: clickable ? 1 : 0.55 }}
+            style={{ cursor: clickable ? 'pointer' : 'default', opacity: clickable ? 1 : 0.55, '--icon-offset': `${item.iconOffset}px`, '--icon-shadow': item.iconShadow }}
           >
             <img className={styles.icon} src={item.icon} alt={item.label} draggable={false} />
             <div

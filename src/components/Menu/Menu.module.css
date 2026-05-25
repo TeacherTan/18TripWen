@@ -24,6 +24,7 @@
   object-fit: contain;
   position: relative;
   z-index: 1;
+  filter: drop-shadow(var(--icon-shadow, 2px 4px 4px rgba(0, 0, 0, 0.5)));
 }
 
 .textGroup {
@@ -33,12 +34,12 @@
   background-position: center;
   padding: 20px 32px;
   text-align: center;
-  margin-left: -40px;
+  margin-left: var(--icon-offset, -40px);
 }
 
 .reverse .textGroup {
   margin-left: 0;
-  margin-right: -40px;
+  margin-right: var(--icon-offset, -40px);
 }
 
 .label {
