@@ -1,11 +1,12 @@
 import { useNavigate } from 'react-router-dom'
 import styles from './Menu.module.css'
 
-import icon1 from '../../assets/main-page/1.png'
-import icon2 from '../../assets/main-page/2.png'
-import icon3 from '../../assets/main-page/3.png'
-import icon4 from '../../assets/main-page/4.png'
-import icon5 from '../../assets/main-page/5.png'
+import icon1 from '../../assets/Chibi_character_splitting/kfk/kfk.png'
+import icon2 from '../../assets/Chibi_character_splitting/朝班/rg.png'
+import icon3 from '../../assets/Chibi_character_splitting/昼班/akt.png'
+import icon4 from '../../assets/Chibi_character_splitting/夕班/rt.png'
+import icon5 from '../../assets/Chibi_character_splitting/夜班/nagi.png'
+import buttonBg from '../../assets/button-bg.png'
 
 const menuItems = [
   { icon: icon1, label: '地图',     sublabel: 'MAP',           to: '/map' },
@@ -30,7 +31,10 @@ export default function Menu() {
             style={{ cursor: clickable ? 'pointer' : 'default', opacity: clickable ? 1 : 0.55 }}
           >
             <img className={styles.icon} src={item.icon} alt={item.label} draggable={false} />
-            <div className={styles.textGroup}>
+            <div
+              className={styles.textGroup}
+              style={{ backgroundImage: `url(${buttonBg})` }}
+            >
               <div className={styles.label}>{item.label}</div>
               <div className={styles.sublabel}>{item.sublabel}</div>
             </div>

@@ -1,36 +1,48 @@
 .menu {
-  background: #fff;
-  padding: 40px 20px;
+  background-image: url('../../assets/main-page/background.png');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  padding: 10px 20px;
 }
 
 .menuItem {
   display: flex;
   align-items: center;
-  gap: 16px;
-  padding: 24px 12px;
+  gap: 0;
+  padding: 2px 12px;
 }
 
 .reverse {
   flex-direction: row-reverse;
 }
 
-.reverse .textGroup {
-  text-align: right;
-}
-
 .icon {
-  width: 80px;
-  height: 80px;
+  width: 130px;
+  height: 130px;
   flex-shrink: 0;
   object-fit: contain;
+  position: relative;
+  z-index: 1;
 }
 
 .textGroup {
   flex: 1;
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+  background-position: center;
+  padding: 20px 32px;
+  text-align: center;
+  margin-left: -40px;
+}
+
+.reverse .textGroup {
+  margin-left: 0;
+  margin-right: -40px;
 }
 
 .label {
-  font-family: 'Intel One Mono', monospace;
+  font-family: 'Fusion Pixel', 'Intel One Mono', monospace;
   font-size: 36px;
   font-weight: 400;
   color: #000;
@@ -38,10 +50,10 @@
 }
 
 .sublabel {
-  font-family: 'Intel One Mono', monospace;
-  font-size: 14px;
+  font-family: 'Fusion Pixel', 'Intel One Mono', monospace;
+  font-size: 12px;
   font-weight: 400;
   color: #888;
   letter-spacing: 0.1em;
-  margin-top: 4px;
+  margin-top: 6px;
 }

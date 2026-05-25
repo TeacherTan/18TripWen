@@ -1,5 +1,14 @@
 @import url('https://fonts.googleapis.com/css2?family=Intel+One+Mono:wght@400;700&display=swap');
 
+/* 像素字体（Fusion Pixel Font, OFL-1.1）— 已子集化为目录所需字符 */
+@font-face {
+  font-family: 'Fusion Pixel';
+  src: url('../assets/fonts/fusion-pixel-12px.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
 *,
 *::before,
 *::after {
