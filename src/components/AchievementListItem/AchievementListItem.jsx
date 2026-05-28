@@ -22,18 +22,20 @@ const ICON_MAP = {
   extra_painter: imgPainter,
 }
 
+// 这几个 NPC 原图偏亮，统一滤镜后仍显浅，锁定态单独加深以与其余对齐
+const DARK_LOCKED_NPCS = new Set(['npc_ushio', 'npc_chihiro', 'npc_toi', 'npc_ryui'])
+
 export default function AchievementListItem({ spot }) {
   const unlocked = spot.unlocked
   const mappedIcon = ICON_MAP[spot.asset_key]
   const npcIcon = spot.type === 'npc' && spot.asset_key ? `/npc/${spot.asset_key}.png` : placeholderIcon
+  const npcLockedClass = DARK_LOCKED_NPCS.has(spot.asset_key) ? styles.iconLockedNpcDark : styles.iconLockedNpc
   return (
     <li className={`${styles.item} ${unlocked ? styles.unlocked : styles.locked}`}>
       <div className={styles.iconWrap}>
         {mappedIcon
           ? <img src={mappedIcon} alt={spot.name} className={`${styles.iconVenue} ${unlocked ? '' : styles.iconLocked}`} />
-          : unlocked
-            ? <img src={npcIcon} alt={spot.name} className={styles.icon} />
-            : <div className={styles.placeholder} />
+          : <img src={npcIcon} alt={spot.name} className={`${styles.icon} ${unlocked ? '' : npcLockedClass}`} />
         }
       </div>
       <div className={styles.text}>

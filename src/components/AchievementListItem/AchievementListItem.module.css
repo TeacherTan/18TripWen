@@ -12,11 +12,6 @@
   width: 100%; height: 100%; object-fit: contain;
   border-radius: 12px;
 }
-.placeholder {
-  width: 100%; height: 100%;
-  background: #d4d4d4;
-  border-radius: 12px;
-}
 .text { flex: 1; min-width: 0; }
 .title {
   font-weight: 600; font-size: 15px;
@@ -30,3 +25,5 @@
 .locked .title, .locked .desc { color: #aaa; }
 .iconVenue { width: 80%; }
 .iconLocked { filter: grayscale(100%) opacity(0.4); }
+.iconLockedNpc { filter: grayscale(100%) contrast(0.4) brightness(1.1) opacity(0.5); }
+.iconLockedNpcDark { filter: grayscale(100%) contrast(0.4) brightness(0.85) opacity(0.7); }
