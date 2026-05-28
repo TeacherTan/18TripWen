@@ -28,3 +28,5 @@
   overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
 }
 .locked .title, .locked .desc { color: #aaa; }
+.iconVenue { width: 80%; }
+.iconLocked { filter: grayscale(100%) opacity(0.4); }

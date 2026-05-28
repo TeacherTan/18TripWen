@@ -29,6 +29,32 @@
    - props：`assetKey / name / unlocked / highlighted`
    - `highlighted` 触发 `unlock-pulse` 动画
 
+## 前端设计参考
+
+### 成就列表图标（AchievementListItem）
+
+**容器尺寸**：`iconWrap` 固定 56×56px，`object-fit: contain`。
+
+**venue 队标图片规则**（经实测确认）：
+
+- `width: 80%`，不限制 height（让图片按原始比例自然撑高）  
+  → 队标为非正方形图片，若同时约束宽高或使用 `width/height: 75%`，图片会被强制裁切；只约束宽度可保留完整比例。
+- **无需垂直偏移**（`transform: translateY` 不需要）；`display: grid; place-items: center` 已自然居中。
+
+**锁定态**：`.iconLocked { filter: grayscale(100%) opacity(0.4) }`  
+→ 队标在未解锁状态也可见，灰度半透明提示"待解锁"。
+
+**venue 队标文件映射**（`src/assets/`）：
+
+| asset_key | 文件 | 场地 |
+|-----------|------|------|
+| venue_01 | R1ze.png | 朝班 |
+| venue_02 | Day2.png | 昼班 |
+| venue_03 | Ev3ns.png | 夕班 |
+| venue_04 | L4mps.png | 夜班 |
+
+---
+
 ## 关键约定
 
 - 成就状态无独立表，直接由 `check_ins × check_in_spots` 连表推导
