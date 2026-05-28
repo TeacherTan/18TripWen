@@ -55,8 +55,8 @@ router.get('/status', authenticate, async (req, res, next) => {
         floor: r.floor,
         pos_x: r.pos_x != null ? Number(r.pos_x) : null,
         pos_y: r.pos_y != null ? Number(r.pos_y) : null,
-        // 服务端遮蔽：未解锁时不返回真实描述
-        description: unlocked ? r.description : null,
+        // 服务端遮蔽：仅场地探索（venue）未解锁时不返回真实描述；角色/其他成就始终返回
+        description: unlocked || r.type !== 'venue' ? r.description : null,
         activity_intro: r.activity_intro, // NPC 活动简介不遮蔽（楼层列表始终显示）
         unlocked,
         checked_at: r.checked_at,

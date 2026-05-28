@@ -30,6 +30,8 @@ export default function AchievementListItem({ spot }) {
   const mappedIcon = ICON_MAP[spot.asset_key]
   const npcIcon = spot.type === 'npc' && spot.asset_key ? `/npc/${spot.asset_key}.png` : placeholderIcon
   const npcLockedClass = DARK_LOCKED_NPCS.has(spot.asset_key) ? styles.iconLockedNpcDark : styles.iconLockedNpc
+  // 仅场地探索（venue）保留 ??? 隐藏；角色/其他成就的文案始终公开
+  const revealText = unlocked || spot.type !== 'venue'
   return (
     <li className={`${styles.item} ${unlocked ? styles.unlocked : styles.locked}`}>
       <div className={styles.iconWrap}>
@@ -39,8 +41,8 @@ export default function AchievementListItem({ spot }) {
         }
       </div>
       <div className={styles.text}>
-        <div className={styles.title}>{unlocked ? spot.name : '???'}</div>
-        <div className={styles.desc}>{unlocked ? (spot.description || '描述待补') : '???'}</div>
+        <div className={styles.title}>{revealText ? spot.name : '???'}</div>
+        <div className={styles.desc}>{revealText ? (spot.description || '描述待补') : '???'}</div>
       </div>
     </li>
   )
