@@ -27,6 +27,7 @@ const EXTRAS = [
   { name: '命运所指向',     asset_key: 'extra_fortune',  description: '购置"占卜券"并找到 白光糖衣 完成一次占卜' },
   { name: '那位神秘的画家', asset_key: 'extra_painter',  description: '购置"印象券"并找到 衣川季肋 绘制麦芽糖/色纸印象画' },
   { name: '我全都要',       asset_key: 'extra_buyall',   description: '在官摊购买任意制品' },
+  { name: '谁的一瞬间',     asset_key: 'extra_photo',    description: '在官摊处领取胶卷相机并拍摄一张照片' },
 ];
 
 // 固定种子的伪随机：保证每次 db:reset 结果一致

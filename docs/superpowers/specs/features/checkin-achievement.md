@@ -44,7 +44,9 @@
 **锁定态**：`.iconLocked { filter: grayscale(100%) opacity(0.4) }`  
 → 队标在未解锁状态也可见，灰度半透明提示"待解锁"。
 
-**venue 队标文件映射**（`src/assets/`）：
+**图标文件映射**（`AchievementListItem` 与 `AchievementSlot` 共用 `ICON_MAP`，按 `asset_key` 查表）：
+
+venue 队标（`src/assets/`）：
 
 | asset_key | 文件 | 场地 |
 |-----------|------|------|
@@ -52,6 +54,18 @@
 | venue_02 | Day2.png | 昼班 |
 | venue_03 | Ev3ns.png | 夕班 |
 | venue_04 | L4mps.png | 夜班 |
+
+extra 成就图标（256×256 透明底正方形，已统一裁掉留白）：
+
+| asset_key | 文件 | 成就 |
+|-----------|------|------|
+| extra_plan | kfk/Airplane.png | 计划通 |
+| extra_buyall | kfk/Sign.png | 我全都要 |
+| extra_photo | kfk/Camera.png | 谁的一瞬间 |
+| extra_fortune | 夜班/糖衣.png | 命运所指向 |
+| extra_painter | 昼班/衣川季肋.png | 那位神秘的画家 |
+
+> 路径均相对 `src/assets/Chibi_character_splitting/`。`Pin.png` 暂未分配。
 
 ---
 
