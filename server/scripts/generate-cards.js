@@ -49,8 +49,9 @@ function writeCsv(outPath, tokens, baseUrl) {
   mkdirSync(dirname(outPath), { recursive: true });
   const lines = ['index,nfc_token,login_url'];
   tokens.forEach((t, i) => {
-    const url = `${baseUrl}/?nfc=${t}`;
-    lines.push(`${i + 1},${t},"${url.replace(/"/g, '""')}"`);
+    // 去掉协议头（https:// 或 http://），只保留域名+路径，方便写卡工具自行拼接
+    const url = `${baseUrl}/?nfc=${t}`.replace(/^https?:\/\//, '');
+    lines.push(`${i + 1},${t},${url}`);
   });
   writeFileSync(outPath, lines.join('\n') + '\n', 'utf8');
 }
