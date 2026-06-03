@@ -27,12 +27,12 @@ async function insertTokens(tokens) {
   let inserted = 0;
   try {
     await client.query('BEGIN');
-    for (const t of tokens) {
+    for (let i = 0; i < tokens.length; i++) {
       const { rowCount } = await client.query(
-        `INSERT INTO users (nfc_token, role, is_registered)
-         VALUES ($1, 'user', false)
+        `INSERT INTO users (nfc_token, card_index, role, is_registered)
+         VALUES ($1, $2, 'user', false)
          ON CONFLICT (nfc_token) DO NOTHING`,
-        [t],
+        [tokens[i], i + 1],
       );
       inserted += rowCount;
     }

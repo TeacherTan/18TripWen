@@ -14,6 +14,7 @@ CREATE TABLE users (
   city           VARCHAR(50),
   avatar_url     TEXT,
   nfc_token      UUID UNIQUE NOT NULL DEFAULT gen_random_uuid(),
+  card_index     SMALLINT,
   role           VARCHAR(20) NOT NULL DEFAULT 'user',
   is_registered  BOOLEAN NOT NULL DEFAULT false,
   deactivated_at TIMESTAMPTZ,

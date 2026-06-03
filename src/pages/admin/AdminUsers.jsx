@@ -130,6 +130,7 @@ export default function AdminUsers() {
               <th style={{ width: 32 }}>
                 <input type="checkbox" checked={allSelected} onChange={toggleAll} aria-label="全选" />
               </th>
+              <th style={{ width: 40, color: '#64748b' }}>#</th>
               <th>用户名</th>
               <th>城市</th>
               <th>角色</th>
@@ -150,6 +151,7 @@ export default function AdminUsers() {
                     aria-label="选择该卡"
                   />
                 </td>
+                <td style={{ color: '#475569', fontSize: '0.8rem' }}>{u.card_index ?? '—'}</td>
                 <td>{u.username || <em>未注册</em>}</td>
                 <td>{u.city || '—'}</td>
                 <td>{u.role}</td>
@@ -166,7 +168,7 @@ export default function AdminUsers() {
               </tr>
             ))}
             {users.length === 0 && (
-              <tr><td colSpan={7} style={{ textAlign: 'center', color: '#94a3b8' }}>无数据</td></tr>
+              <tr><td colSpan={8} style={{ textAlign: 'center', color: '#94a3b8' }}>无数据</td></tr>
             )}
           </tbody>
         </table>

@@ -13,6 +13,7 @@ function toAdminUser(row) {
     city: row.city,
     avatar_url: row.avatar_url,
     nfc_token: row.nfc_token,
+    card_index: row.card_index ?? null,
     role: row.role,
     is_registered: row.is_registered,
     deactivated_at: row.deactivated_at,
@@ -35,7 +36,7 @@ router.get('/users', async (req, res, next) => {
     }
     const where = conditions.length ? `WHERE ${conditions.join(' AND ')}` : '';
     const { rows } = await query(
-      `SELECT * FROM users ${where} ORDER BY created_at DESC`,
+      `SELECT * FROM users ${where} ORDER BY card_index ASC NULLS LAST, created_at ASC`,
       params,
     );
     res.json({ users: rows.map(toAdminUser) });

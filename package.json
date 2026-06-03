@@ -16,7 +16,8 @@
     "db:seed": "node server/scripts/seed-spots.js && node server/scripts/seed-admin.js && node server/scripts/seed-testuser.js",
     "cards:generate": "node server/scripts/generate-cards.js",
     "cards:import": "node server/scripts/generate-cards.js --import",
-    "cards:export-spots": "node server/scripts/export-spot-tokens.js"
+    "cards:export-spots": "node server/scripts/export-spot-tokens.js",
+    "cards:migrate-index": "node server/scripts/migrate-card-index.js"
   },
   "dependencies": {
     "bcrypt": "^5.1.1",
