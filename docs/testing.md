@@ -215,3 +215,18 @@ docker compose down -v   # 彻底删容器和数据
 | 头像上传 | adapter 已搭好（`server/storage/`），UI 与接口未实现，等设计稿 |
 | iOS PWA NFC | 系统级限制，方案默认走浏览器路径 |
 | 部署 | 域名 `tyzhome.xyz` 已确定，云服务器待开通后接 Nginx + Let's Encrypt |
+
+---
+
+## 十、token 批量管理（v0.3）
+
+- 批量「仅清空注册信息」：多选后调用 `/admin/users/clear-registration`，断言响应 `affected` 等于符合条件的卡数，username/city 置空、is_registered=false、check_ins 仍在、nfc_token 不变。
+- 批量「完全重置为新卡」：调用 `/admin/users/reset-card`，断言 `affected` 与 `deleted_check_ins`，该卡 check_ins 清零、nfc_token 不变。
+- admin 行与已停用行：勾选框禁用；即便伪造 id 传入，响应中这些行不计入 `affected`。
+- 二次确认弹窗：取消键为绿色主色、确认键为灰色次级样式（防误触）。
+
+## 十一、token 生成与备份（v0.3）
+
+- `npm run cards:generate -- --count 300`：DB 新增 300 张空白卡，`local/nfc-cards.csv` 含 301 行（表头 + 300）。
+- `npm run cards:import -- local/nfc-cards.csv`：DB 丢失后从备份还原同一批 token，二次执行为全部「已存在跳过」（幂等）。
+- `npm run cards:export-spots`：导出 19 个打卡点到 `local/spot-tokens.csv`。

@@ -202,3 +202,23 @@ Content-Type: application/json
   "type": "venue",
   "description": "这是一个测试场地"
 }
+
+### ===== v0.3 token 批量管理 =====
+
+### E. 批量仅清空注册信息（保留 token 与打卡）
+POST {{baseUrl}}/admin/users/clear-registration
+Authorization: Bearer {{adminJwt}}
+Content-Type: application/json
+
+{
+  "ids": ["REPLACE_USER_ID_1", "REPLACE_USER_ID_2"]
+}
+
+### F. 批量完全重置为新卡（清注册 + 删打卡）
+POST {{baseUrl}}/admin/users/reset-card
+Authorization: Bearer {{adminJwt}}
+Content-Type: application/json
+
+{
+  "ids": ["REPLACE_USER_ID_1"]
+}
