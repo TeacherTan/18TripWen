@@ -37,7 +37,7 @@
 - **Generate**
 
   ```
-  node server/scripts/generate-cards.js --count 300 --base-url https://tyzhome.xyz --out local/nfc-cards.csv
+  node server/scripts/generate-cards.js --count 300 --base-url https://18trip.tyzhome.xyz --out local/nfc-cards.csv
   ```
 
   - 生成 `count` 个随机 UUID token（默认 `gen_random_uuid()` 由 DB 生成，确保唯一）。
@@ -59,18 +59,18 @@
 
 ```
 index,nfc_token,login_url
-1,3f2a...,https://tyzhome.xyz/?nfc=3f2a...
-2,9c81...,https://tyzhome.xyz/?nfc=9c81...
+1,3f2a...,https://18trip.tyzhome.xyz/?nfc=3f2a...
+2,9c81...,https://18trip.tyzhome.xyz/?nfc=9c81...
 ```
 
-`login_url = <base-url>/?nfc=<nfc_token>`。`--base-url` 默认 `https://tyzhome.xyz`。
+`login_url = <base-url>/?nfc=<nfc_token>`。`--base-url` 默认 `https://18trip.tyzhome.xyz`。
 
 ### 参数
 
 | 参数 | 默认值 | 说明 |
 |------|--------|------|
 | `--count <n>` | `300` | 生成数量（仅 generate 模式） |
-| `--base-url <url>` | `https://tyzhome.xyz` | 拼接 `login_url` 的站点根 |
+| `--base-url <url>` | `https://18trip.tyzhome.xyz` | 拼接 `login_url` 的站点根 |
 | `--out <path>` | `local/nfc-cards.csv` | CSV 输出路径（generate 模式） |
 | `--import <path>` | —— | 切换为 import 模式，从 CSV 还原 |
 
@@ -97,7 +97,7 @@ index,nfc_token,login_url
 ### 新脚本 `server/scripts/export-spot-tokens.js`
 
 ```
-node server/scripts/export-spot-tokens.js --base-url https://tyzhome.xyz --out local/spot-tokens.csv
+node server/scripts/export-spot-tokens.js --base-url https://18trip.tyzhome.xyz --out local/spot-tokens.csv
 ```
 
 - 从 DB 读取全部 `check_in_spots`（按 `display_order` 升序）。
@@ -107,7 +107,7 @@ CSV 列：`display_order,type,name,spot_token,spot_url`
 
 ```
 display_order,type,name,spot_token,spot_url
-1,venue,朝班,a0000000-0000-0000-0000-000000000001,https://tyzhome.xyz/?spot=a0000000-0000-0000-0000-000000000001
+1,venue,朝班,a0000000-0000-0000-0000-000000000001,https://18trip.tyzhome.xyz/?spot=a0000000-0000-0000-0000-000000000001
 ```
 
 `spot_url = <base-url>/?spot=<spot_token>`。
