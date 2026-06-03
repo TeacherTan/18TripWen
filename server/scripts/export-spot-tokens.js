@@ -25,7 +25,7 @@ async function main() {
   const lines = ['display_order,type,name,spot_token,spot_url'];
   for (const r of rows) {
     const url = `${opts.baseUrl}/?spot=${r.spot_token}`;
-    lines.push(`${r.display_order},${r.type},"${r.name}","${url.replace(/"/g, '""')}"`);
+    lines.push(`${r.display_order},${r.type},"${r.name}","${r.spot_token}","${url.replace(/"/g, '""')}"`);
   }
   writeFileSync(opts.outPath, lines.join('\n') + '\n', 'utf8');
 

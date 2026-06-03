@@ -13,7 +13,10 @@ function parseArgs() {
     if (args[i] === '--count') out.count = parseInt(args[++i], 10);
     else if (args[i] === '--base-url') out.baseUrl = args[++i];
     else if (args[i] === '--out') out.outPath = args[++i];
-    else if (args[i] === '--import') out.importPath = args[++i];
+    else if (args[i] === '--import') {
+      out.importPath = args[++i];
+      if (!out.importPath) { console.error('[generate-cards] --import requires a file path'); process.exit(1); }
+    }
   }
   return out;
 }
