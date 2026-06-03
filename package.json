@@ -12,7 +12,7 @@
     "preview": "vite preview",
     "db:up": "docker compose up -d postgres",
     "db:down": "docker compose down",
-    "db:reset": "docker compose up -d postgres && sleep 2 && docker compose exec -T postgres psql -U 18trip -d 18trip < server/db/schema.sql && npm run db:seed",
+    "db:reset": "node server/scripts/db-reset-guard.js && docker compose up -d postgres && sleep 2 && docker compose exec -T postgres psql -U 18trip -d 18trip < server/db/schema.sql && npm run db:seed",
     "db:seed": "node server/scripts/seed-spots.js && node server/scripts/seed-admin.js && node server/scripts/seed-testuser.js",
     "cards:generate": "node server/scripts/generate-cards.js",
     "cards:import": "node server/scripts/generate-cards.js --import",

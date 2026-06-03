@@ -99,18 +99,84 @@ router.put('/users/:id/deactivate', async (req, res, next) => {
   } catch (err) { next(err); }
 });
 
-// POST /api/admin/users/:id/report-loss — 挂失（重新生成 nfc_token，旧卡失效）
+// POST /api/admin/users/:id/report-loss — 挂失
+// 语义：停用丢失的源卡，把其注册信息 + 打卡记录整体迁移到一张空白备用卡。
+// 全程不改写任何 nfc_token（token 已锁定）。target 必须是未注册的空白卡。
 router.post('/users/:id/report-loss', async (req, res, next) => {
+  const client = await pool.connect();
   try {
-    const { rows } = await query(
-      `UPDATE users SET nfc_token = gen_random_uuid()
-       WHERE id = $1 AND deactivated_at IS NULL
-       RETURNING *`,
-      [req.params.id],
+    const sourceId = req.params.id;
+    const { targetUserId } = req.body || {};
+    if (!targetUserId) return res.status(400).json({ error: 'targetUserId is required' });
+    if (targetUserId === sourceId) return res.status(400).json({ error: 'source and target must differ' });
+
+    await client.query('BEGIN');
+
+    // 读源卡身份（必须存在且未停用）
+    const srcRes = await client.query(
+      `SELECT id, username, password_hash, city, avatar_url, is_registered
+       FROM users WHERE id = $1 AND deactivated_at IS NULL`,
+      [sourceId],
     );
-    if (rows.length === 0) return res.status(404).json({ error: 'user not found' });
-    res.json({ user: toAdminUser(rows[0]), message: '旧卡已失效，新 nfc_token 已生成' });
-  } catch (err) { next(err); }
+    if (srcRes.rows.length === 0) {
+      await client.query('ROLLBACK');
+      return res.status(404).json({ error: 'source user not found' });
+    }
+    const src = srcRes.rows[0];
+
+    // 目标必须存在、未停用、且为空白卡（未注册且无用户名）
+    const tgtRes = await client.query(
+      `SELECT id, username, is_registered FROM users WHERE id = $1 AND deactivated_at IS NULL`,
+      [targetUserId],
+    );
+    if (tgtRes.rows.length === 0) {
+      await client.query('ROLLBACK');
+      return res.status(404).json({ error: 'target user not found' });
+    }
+    if (tgtRes.rows[0].is_registered || tgtRes.rows[0].username) {
+      await client.query('ROLLBACK');
+      return res.status(409).json({ error: 'target must be a blank unregistered card' });
+    }
+
+    // 1) 释放源卡身份并停用（先释放 UNIQUE username，供 target 承接）
+    const srcUpd = await client.query(
+      `UPDATE users
+       SET username = NULL, password_hash = NULL, city = NULL, avatar_url = NULL,
+           is_registered = false, deactivated_at = now()
+       WHERE id = $1
+       RETURNING *`,
+      [sourceId],
+    );
+
+    // 2) 打卡记录迁移到目标卡（目标为空白卡，无 UNIQUE 冲突）
+    const migrated = await client.query(
+      `UPDATE check_ins SET user_id = $2 WHERE user_id = $1 RETURNING id`,
+      [sourceId, targetUserId],
+    );
+
+    // 3) 身份赋给目标卡（nfc_token 不变）
+    const tgtUpd = await client.query(
+      `UPDATE users
+       SET username = $2, password_hash = $3, city = $4, avatar_url = $5, is_registered = $6
+       WHERE id = $1
+       RETURNING *`,
+      [targetUserId, src.username, src.password_hash, src.city, src.avatar_url, src.is_registered],
+    );
+
+    await client.query('COMMIT');
+    res.json({
+      source: toAdminUser(srcUpd.rows[0]),
+      target: toAdminUser(tgtUpd.rows[0]),
+      migrated_check_ins: migrated.rows.length,
+      message: '旧卡已停用，身份与打卡已迁移到新卡（token 未变）',
+    });
+  } catch (err) {
+    await client.query('ROLLBACK');
+    if (err.code === '23505') return res.status(409).json({ error: 'username conflict during transfer' });
+    next(err);
+  } finally {
+    client.release();
+  }
 });
 
 // POST /api/admin/users/clear-registration — 批量仅清空注册信息（保留 token 与打卡）
