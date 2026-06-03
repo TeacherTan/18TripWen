@@ -127,6 +127,62 @@ router.post('/users/:id/report-loss', async (req, res, next) => {
   } catch (err) { next(err); }
 });
 
+// POST /api/admin/users/clear-registration — 批量仅清空注册信息（保留 token 与打卡）
+router.post('/users/clear-registration', async (req, res, next) => {
+  try {
+    const { ids } = req.body || {};
+    if (!Array.isArray(ids) || ids.length === 0) {
+      return res.status(400).json({ error: 'ids must be a non-empty array' });
+    }
+    const { rowCount } = await query(
+      `UPDATE users
+       SET username = NULL, password_hash = NULL, city = NULL, is_registered = false
+       WHERE id = ANY($1::uuid[]) AND role <> 'admin' AND deactivated_at IS NULL`,
+      [ids],
+    );
+    res.json({ affected: rowCount });
+  } catch (err) { next(err); }
+});
+
+// POST /api/admin/users/reset-card — 批量重置为新卡（清注册信息 + 删打卡，保留 token）
+router.post('/users/reset-card', async (req, res, next) => {
+  const client = await pool.connect();
+  try {
+    const { ids } = req.body || {};
+    if (!Array.isArray(ids) || ids.length === 0) {
+      return res.status(400).json({ error: 'ids must be a non-empty array' });
+    }
+    await client.query('BEGIN');
+    const eligible = await client.query(
+      `SELECT id FROM users
+       WHERE id = ANY($1::uuid[]) AND role <> 'admin' AND deactivated_at IS NULL`,
+      [ids],
+    );
+    const eligibleIds = eligible.rows.map((r) => r.id);
+    if (eligibleIds.length === 0) {
+      await client.query('COMMIT');
+      return res.json({ affected: 0, deleted_check_ins: 0 });
+    }
+    const del = await client.query(
+      `DELETE FROM check_ins WHERE user_id = ANY($1::uuid[])`,
+      [eligibleIds],
+    );
+    const upd = await client.query(
+      `UPDATE users
+       SET username = NULL, password_hash = NULL, city = NULL, is_registered = false
+       WHERE id = ANY($1::uuid[])`,
+      [eligibleIds],
+    );
+    await client.query('COMMIT');
+    res.json({ affected: upd.rowCount, deleted_check_ins: del.rowCount });
+  } catch (err) {
+    await client.query('ROLLBACK');
+    next(err);
+  } finally {
+    client.release();
+  }
+});
+
 // POST /api/admin/users/transfer — 用户数据迁移
 router.post('/users/transfer', async (req, res, next) => {
   const client = await pool.connect();
