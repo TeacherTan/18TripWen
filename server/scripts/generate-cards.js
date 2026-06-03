@@ -45,7 +45,10 @@ async function insertTokens(tokens) {
 function writeCsv(outPath, tokens, baseUrl) {
   mkdirSync(dirname(outPath), { recursive: true });
   const lines = ['index,nfc_token,login_url'];
-  tokens.forEach((t, i) => lines.push(`${i + 1},${t},${baseUrl}/?nfc=${t}`));
+  tokens.forEach((t, i) => {
+    const url = `${baseUrl}/?nfc=${t}`;
+    lines.push(`${i + 1},${t},"${url.replace(/"/g, '""')}"`);
+  });
   writeFileSync(outPath, lines.join('\n') + '\n', 'utf8');
 }
 
@@ -83,8 +86,8 @@ async function main() {
   await pool.end();
 }
 
-main().catch((err) => {
+main().catch(async (err) => {
   console.error('[generate-cards] failed:', err.message);
-  pool.end();
+  await pool.end();
   process.exit(1);
 });
