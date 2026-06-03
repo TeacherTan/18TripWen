@@ -270,3 +270,24 @@ function TransferModal({ modal, setModal, onDone }) {
     </div>
   )
 }
+
+function ConfirmBulkModal({ action, count, onCancel, onConfirm }) {
+  const isReset = action === 'reset'
+  const title = isReset ? '完全重置为新卡' : '仅清空注册信息'
+  const desc = isReset
+    ? `将清空 ${count} 张卡的注册信息，并删除其全部打卡记录，恢复为出厂空白卡。卡片 token 保留不变。`
+    : `将清空 ${count} 张卡的注册信息（用户名/密码/城市），打卡记录与卡片 token 均保留。`
+  return (
+    <div className="admin-modal-backdrop">
+      <div className="admin-modal">
+        <h2>{title}</h2>
+        <p style={{ fontSize: '0.9rem', color: '#cbd5e1' }}>{desc}</p>
+        <p style={{ fontSize: '0.85rem', color: '#f87171' }}>此操作不可撤销，请确认无误后再继续。</p>
+        <div className="actions confirm-swap">
+          <button type="button" className="confirm-danger" onClick={onConfirm}>确认{title}</button>
+          <button type="button" className="cancel-primary" onClick={onCancel}>取消</button>
+        </div>
+      </div>
+    </div>
+  )
+}

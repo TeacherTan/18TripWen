@@ -237,3 +237,43 @@
   background: #334155;
   color: #cbd5e1;
 }
+
+/* 批量操作栏 */
+.admin-bulkbar {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  margin-bottom: 16px;
+  padding: 10px 14px;
+  background: #1e293b;
+  border: 1px solid #334155;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  color: #cbd5e1;
+}
+
+.admin-bulkbar button {
+  padding: 6px 12px;
+  border-radius: 6px;
+  border: 1px solid #334155;
+  background: #0c1116;
+  color: #cbd5e1;
+  cursor: pointer;
+}
+
+/* 二次确认：颜色互换，防误触 —— 取消用醒目主色，确认用低调次级样式 */
+.admin-modal .actions.confirm-swap {
+  justify-content: space-between;
+}
+
+.admin-modal .actions.confirm-swap .cancel-primary {
+  background: #4caf50;
+  color: white;
+  font-weight: 600;
+}
+
+.admin-modal .actions.confirm-swap .confirm-danger {
+  background: transparent;
+  color: #94a3b8;
+  border: 1px solid #334155;
+}
