@@ -105,11 +105,7 @@ Content-Type: application/json
   "city": "长沙"
 }
 
-### 15. 重新生成 nfc_token（旧卡失效）
-POST {{baseUrl}}/admin/users/REPLACE_USER_ID/regen-token
-Authorization: Bearer {{jwt}}
-
-### 16. 挂失（语义同 regen-token）
+### 15. 挂失（重新生成 nfc_token，旧卡失效）
 POST {{baseUrl}}/admin/users/REPLACE_USER_ID/report-loss
 Authorization: Bearer {{jwt}}
 

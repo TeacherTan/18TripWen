@@ -138,8 +138,8 @@ npm run dev
 | ADM-02 | admin 登录后访问 `/admin` | 进入 AdminLayout |
 | ADM-03 | 用户管理列出现有用户 | 表格显示 username/city/role/nfc_token |
 | ADM-04 | 新增空白用户 | 返回 nfc_token 给前台写卡 |
-| ADM-05 | 重发 NFC（regen-token） | 旧 nfc_token 失效，新 token 显示在弹窗 |
-| ADM-06 | 挂失 | 同 regen-token，且文案提示「旧卡已失效」 |
+| ADM-05 | 挂失 | 重新生成 nfc_token，旧卡失效，新 token 显示在弹窗 |
+| ADM-06 | 用户列表分页（每页 30） | 超过 30 条时分页显示，上一页/下一页正常切换 |
 | ADM-07 | 停用用户 | 用户从默认列表消失，勾选「含已停用」可见 |
 | ADM-08 | admin 停用自己 | 报错「cannot deactivate yourself」 |
 | ADM-09 | 用户数据迁移 | source 的打卡迁到 target，source 被停用 |

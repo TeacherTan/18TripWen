@@ -261,6 +261,21 @@
   cursor: pointer;
 }
 
+.admin-pagination {
+  display: flex;
+  gap: 14px;
+  align-items: center;
+  justify-content: center;
+  margin-top: 16px;
+  font-size: 0.9rem;
+  color: #94a3b8;
+}
+
+.admin-pagination button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
 /* 二次确认：颜色互换，防误触 —— 取消用醒目主色，确认用低调次级样式 */
 .admin-modal .actions.confirm-swap {
   justify-content: space-between;

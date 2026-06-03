@@ -99,21 +99,7 @@ router.put('/users/:id/deactivate', async (req, res, next) => {
   } catch (err) { next(err); }
 });
 
-// POST /api/admin/users/:id/regen-token — 重新生成 nfc_token（也用于挂失）
-router.post('/users/:id/regen-token', async (req, res, next) => {
-  try {
-    const { rows } = await query(
-      `UPDATE users SET nfc_token = gen_random_uuid()
-       WHERE id = $1 AND deactivated_at IS NULL
-       RETURNING *`,
-      [req.params.id],
-    );
-    if (rows.length === 0) return res.status(404).json({ error: 'user not found' });
-    res.json({ user: toAdminUser(rows[0]) });
-  } catch (err) { next(err); }
-});
-
-// POST /api/admin/users/:id/report-loss — 挂失（等价于 regen-token，命名区分用途）
+// POST /api/admin/users/:id/report-loss — 挂失（重新生成 nfc_token，旧卡失效）
 router.post('/users/:id/report-loss', async (req, res, next) => {
   try {
     const { rows } = await query(

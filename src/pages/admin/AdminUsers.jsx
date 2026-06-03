@@ -1,6 +1,8 @@
 import { useEffect, useState, useCallback } from 'react'
 import { apiFetch } from '../../api/client'
 
+const PAGE_SIZE = 30
+
 export default function AdminUsers() {
   const [users, setUsers] = useState([])
   const [search, setSearch] = useState('')
@@ -10,6 +12,7 @@ export default function AdminUsers() {
   const [modal, setModal] = useState(null) // { type: 'create' | 'transfer', ... }
   const [selected, setSelected] = useState(() => new Set())
   const [bulkConfirm, setBulkConfirm] = useState(null) // { action: 'clear' | 'reset', count }
+  const [page, setPage] = useState(1)
 
   const load = useCallback(async () => {
     setLoading(true)
@@ -21,6 +24,7 @@ export default function AdminUsers() {
       const data = await apiFetch(`/admin/users?${params.toString()}`)
       setUsers(data.users)
       setSelected(new Set())
+      setPage(1)
     } catch (err) {
       setError(err.message)
     } finally {
@@ -35,10 +39,6 @@ export default function AdminUsers() {
       if (action === 'deactivate') {
         if (!confirm(`确认停用 ${user.username || '该用户'}？`)) return
         await apiFetch(`/admin/users/${user.id}/deactivate`, { method: 'PUT' })
-      } else if (action === 'regen') {
-        if (!confirm(`重新生成 ${user.username || '该用户'} 的 nfc_token？旧卡将失效。`)) return
-        const res = await apiFetch(`/admin/users/${user.id}/regen-token`, { method: 'POST' })
-        alert(`新 nfc_token：${res.user.nfc_token}`)
       } else if (action === 'report-loss') {
         if (!confirm(`挂失 ${user.username || '该用户'}？将生成新卡 token。`)) return
         const res = await apiFetch(`/admin/users/${user.id}/report-loss`, { method: 'POST' })
@@ -50,9 +50,13 @@ export default function AdminUsers() {
     }
   }
 
+  const totalPages = Math.max(1, Math.ceil(users.length / PAGE_SIZE))
+  const currentPage = Math.min(page, totalPages)
+  const pagedUsers = users.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE)
+
   const isEligible = (u) => !u.deactivated_at && u.role !== 'admin'
-  const eligibleUsers = users.filter(isEligible)
-  const allSelected = eligibleUsers.length > 0 && eligibleUsers.every((u) => selected.has(u.id))
+  const pageEligible = pagedUsers.filter(isEligible)
+  const allSelected = pageEligible.length > 0 && pageEligible.every((u) => selected.has(u.id))
 
   const toggleOne = (id) => {
     setSelected((prev) => {
@@ -62,7 +66,12 @@ export default function AdminUsers() {
     })
   }
   const toggleAll = () => {
-    setSelected(allSelected ? new Set() : new Set(eligibleUsers.map((u) => u.id)))
+    setSelected((prev) => {
+      const next = new Set(prev)
+      if (allSelected) pageEligible.forEach((u) => next.delete(u.id))
+      else pageEligible.forEach((u) => next.add(u.id))
+      return next
+    })
   }
 
   const runBulk = async (action) => {
@@ -131,7 +140,7 @@ export default function AdminUsers() {
             </tr>
           </thead>
           <tbody>
-            {users.map((u) => (
+            {pagedUsers.map((u) => (
               <tr key={u.id} className={u.deactivated_at ? 'deactivated' : ''}>
                 <td>
                   <input
@@ -150,7 +159,6 @@ export default function AdminUsers() {
                 <td className="actions">
                   {!u.deactivated_at && (
                     <>
-                      <button onClick={() => onAction('regen', u)}>重发 NFC</button>
                       <button onClick={() => onAction('report-loss', u)}>挂失</button>
                       <button className="danger" onClick={() => onAction('deactivate', u)}>停用</button>
                     </>
@@ -163,6 +171,26 @@ export default function AdminUsers() {
             )}
           </tbody>
         </table>
+      )}
+
+      {!loading && users.length > 0 && (
+        <div className="admin-pagination">
+          <button
+            className="secondary"
+            disabled={currentPage <= 1}
+            onClick={() => setPage((p) => Math.max(1, p - 1))}
+          >
+            上一页
+          </button>
+          <span>第 {currentPage} / {totalPages} 页 · 共 {users.length} 条</span>
+          <button
+            className="secondary"
+            disabled={currentPage >= totalPages}
+            onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+          >
+            下一页
+          </button>
+        </div>
       )}
 
       {modal?.type === 'create' && (
