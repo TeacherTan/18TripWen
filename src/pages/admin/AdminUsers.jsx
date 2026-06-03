@@ -8,6 +8,8 @@ export default function AdminUsers() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
   const [modal, setModal] = useState(null) // { type: 'create' | 'transfer', ... }
+  const [selected, setSelected] = useState(() => new Set())
+  const [bulkConfirm, setBulkConfirm] = useState(null) // { action: 'clear' | 'reset', count }
 
   const load = useCallback(async () => {
     setLoading(true)
@@ -18,6 +20,7 @@ export default function AdminUsers() {
       if (includeDeactivated) params.set('include_deactivated', '1')
       const data = await apiFetch(`/admin/users?${params.toString()}`)
       setUsers(data.users)
+      setSelected(new Set())
     } catch (err) {
       setError(err.message)
     } finally {
@@ -41,6 +44,35 @@ export default function AdminUsers() {
         const res = await apiFetch(`/admin/users/${user.id}/report-loss`, { method: 'POST' })
         alert(`挂失成功，新 nfc_token：${res.user.nfc_token}`)
       }
+      load()
+    } catch (err) {
+      alert(`操作失败：${err.message}`)
+    }
+  }
+
+  const isEligible = (u) => !u.deactivated_at && u.role !== 'admin'
+  const eligibleUsers = users.filter(isEligible)
+  const allSelected = eligibleUsers.length > 0 && eligibleUsers.every((u) => selected.has(u.id))
+
+  const toggleOne = (id) => {
+    setSelected((prev) => {
+      const next = new Set(prev)
+      if (next.has(id)) next.delete(id); else next.add(id)
+      return next
+    })
+  }
+  const toggleAll = () => {
+    setSelected(allSelected ? new Set() : new Set(eligibleUsers.map((u) => u.id)))
+  }
+
+  const runBulk = async (action) => {
+    const ids = [...selected]
+    const path = action === 'reset' ? '/admin/users/reset-card' : '/admin/users/clear-registration'
+    try {
+      const res = await apiFetch(path, { method: 'POST', body: { ids } })
+      const extra = res.deleted_check_ins != null ? `，删除打卡 ${res.deleted_check_ins} 条` : ''
+      alert(`操作完成：影响 ${res.affected} 张卡${extra}`)
+      setBulkConfirm(null)
       load()
     } catch (err) {
       alert(`操作失败：${err.message}`)
@@ -71,6 +103,15 @@ export default function AdminUsers() {
         <button className="secondary" onClick={() => setModal({ type: 'transfer', source: '', target: '' })}>数据迁移</button>
       </div>
 
+      {selected.size > 0 && (
+        <div className="admin-bulkbar">
+          <span>已选 {selected.size} 项</span>
+          <button className="secondary" onClick={() => setBulkConfirm({ action: 'clear', count: selected.size })}>仅清空注册信息</button>
+          <button className="secondary" onClick={() => setBulkConfirm({ action: 'reset', count: selected.size })}>完全重置为新卡</button>
+          <button className="secondary" onClick={() => setSelected(new Set())}>取消选择</button>
+        </div>
+      )}
+
       {error && <div className="auth-error">{error}</div>}
       {loading ? (
         <p>加载中…</p>
@@ -78,6 +119,9 @@ export default function AdminUsers() {
         <table className="admin-table">
           <thead>
             <tr>
+              <th style={{ width: 32 }}>
+                <input type="checkbox" checked={allSelected} onChange={toggleAll} aria-label="全选" />
+              </th>
               <th>用户名</th>
               <th>城市</th>
               <th>角色</th>
@@ -89,6 +133,15 @@ export default function AdminUsers() {
           <tbody>
             {users.map((u) => (
               <tr key={u.id} className={u.deactivated_at ? 'deactivated' : ''}>
+                <td>
+                  <input
+                    type="checkbox"
+                    checked={selected.has(u.id)}
+                    disabled={!isEligible(u)}
+                    onChange={() => toggleOne(u.id)}
+                    aria-label="选择该卡"
+                  />
+                </td>
                 <td>{u.username || <em>未注册</em>}</td>
                 <td>{u.city || '—'}</td>
                 <td>{u.role}</td>
@@ -106,7 +159,7 @@ export default function AdminUsers() {
               </tr>
             ))}
             {users.length === 0 && (
-              <tr><td colSpan={6} style={{ textAlign: 'center', color: '#94a3b8' }}>无数据</td></tr>
+              <tr><td colSpan={7} style={{ textAlign: 'center', color: '#94a3b8' }}>无数据</td></tr>
             )}
           </tbody>
         </table>
@@ -117,6 +170,14 @@ export default function AdminUsers() {
       )}
       {modal?.type === 'transfer' && (
         <TransferModal modal={modal} setModal={setModal} onDone={load} />
+      )}
+      {bulkConfirm && (
+        <ConfirmBulkModal
+          action={bulkConfirm.action}
+          count={bulkConfirm.count}
+          onCancel={() => setBulkConfirm(null)}
+          onConfirm={() => runBulk(bulkConfirm.action)}
+        />
       )}
     </>
   )
