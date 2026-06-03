@@ -40,9 +40,8 @@ export default function AdminUsers() {
         if (!confirm(`确认停用 ${user.username || '该用户'}？`)) return
         await apiFetch(`/admin/users/${user.id}/deactivate`, { method: 'PUT' })
       } else if (action === 'report-loss') {
-        if (!confirm(`挂失 ${user.username || '该用户'}？将生成新卡 token。`)) return
-        const res = await apiFetch(`/admin/users/${user.id}/report-loss`, { method: 'POST' })
-        alert(`挂失成功，新 nfc_token：${res.user.nfc_token}`)
+        setModal({ type: 'report-loss', source: user, target: '' })
+        return
       }
       load()
     } catch (err) {
@@ -199,6 +198,9 @@ export default function AdminUsers() {
       {modal?.type === 'transfer' && (
         <TransferModal modal={modal} setModal={setModal} onDone={load} />
       )}
+      {modal?.type === 'report-loss' && (
+        <ReportLossModal modal={modal} setModal={setModal} onDone={load} />
+      )}
       {bulkConfirm && (
         <ConfirmBulkModal
           action={bulkConfirm.action}
@@ -292,6 +294,55 @@ function TransferModal({ modal, setModal, onDone }) {
           <div className="actions">
             <button type="button" className="cancel" onClick={() => setModal(null)}>取消</button>
             <button type="submit" disabled={submitting}>{submitting ? '迁移中…' : '执行迁移'}</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  )
+}
+
+function ReportLossModal({ modal, setModal, onDone }) {
+  const [submitting, setSubmitting] = useState(false)
+  const source = modal.source
+  const submit = async (e) => {
+    e.preventDefault()
+    if (!confirm(`确认挂失 ${source.username || '该卡'}？源卡将被停用，身份与打卡迁移到目标空白卡（token 不变）。`)) return
+    setSubmitting(true)
+    try {
+      const res = await apiFetch(`/admin/users/${source.id}/report-loss`, {
+        method: 'POST',
+        body: { targetUserId: modal.target.trim() },
+      })
+      alert(`挂失完成：${res.migrated_check_ins} 条打卡已迁移到新卡，源卡已停用。`)
+      setModal(null)
+      onDone()
+    } catch (err) {
+      alert(`挂失失败：${err.message}`)
+    } finally {
+      setSubmitting(false)
+    }
+  }
+  return (
+    <div className="admin-modal-backdrop">
+      <div className="admin-modal">
+        <h2>挂失换卡</h2>
+        <p style={{ color: '#94a3b8', fontSize: '0.85rem' }}>
+          停用源卡「{source.username || '未注册'}」（id: {source.id}），将其注册信息与打卡记录迁移到一张空白备用卡。
+          两张卡的 nfc_token 均不会改变。
+        </p>
+        <form onSubmit={submit}>
+          <label>
+            目标空白卡 用户 ID
+            <input
+              value={modal.target}
+              onChange={(e) => setModal({ ...modal, target: e.target.value })}
+              placeholder="一张未注册的空白卡 user id"
+              required
+            />
+          </label>
+          <div className="actions">
+            <button type="button" className="cancel" onClick={() => setModal(null)}>取消</button>
+            <button type="submit" disabled={submitting}>{submitting ? '迁移中…' : '执行挂失'}</button>
           </div>
         </form>
       </div>

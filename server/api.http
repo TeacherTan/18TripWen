@@ -105,9 +105,14 @@ Content-Type: application/json
   "city": "长沙"
 }
 
-### 15. 挂失（重新生成 nfc_token，旧卡失效）
-POST {{baseUrl}}/admin/users/REPLACE_USER_ID/report-loss
+### 15. 挂失（停用源卡，身份+打卡迁移到空白目标卡，token 不变）
+POST {{baseUrl}}/admin/users/REPLACE_SOURCE_USER_ID/report-loss
 Authorization: Bearer {{jwt}}
+Content-Type: application/json
+
+{
+  "targetUserId": "REPLACE_BLANK_TARGET_USER_ID"
+}
 
 ### 17. 停用用户
 PUT {{baseUrl}}/admin/users/REPLACE_USER_ID/deactivate

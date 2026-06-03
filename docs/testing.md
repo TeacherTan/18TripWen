@@ -138,7 +138,7 @@ npm run dev
 | ADM-02 | admin 登录后访问 `/admin` | 进入 AdminLayout |
 | ADM-03 | 用户管理列出现有用户 | 表格显示 username/city/role/nfc_token |
 | ADM-04 | 新增空白用户 | 返回 nfc_token 给前台写卡 |
-| ADM-05 | 挂失 | 重新生成 nfc_token，旧卡失效，新 token 显示在弹窗 |
+| ADM-05 | 挂失换卡 | 输入空白目标卡 user id；源卡停用、注册信息+打卡迁移到目标卡，两卡 nfc_token 均不变；目标卡非空白时报 409 |
 | ADM-06 | 用户列表分页（每页 30） | 超过 30 条时分页显示，上一页/下一页正常切换 |
 | ADM-07 | 停用用户 | 用户从默认列表消失，勾选「含已停用」可见 |
 | ADM-08 | admin 停用自己 | 报错「cannot deactivate yourself」 |
